@@ -1,7 +1,8 @@
 import random
 
-from locust import HttpUser, task
 from bs4 import BeautifulSoup
+from locust import HttpUser, task
+from demo_store_constants import ProductCategories
 
 
 def get_csrf_token(html):
@@ -12,7 +13,7 @@ def get_csrf_token(html):
     return ""
 
 
-class GatlingDemoStore(HttpUser):
+class GatlingDemoStoreUser(HttpUser):
     host = "https://demostore.gatling.io"
 
     def login_store(self):
@@ -23,8 +24,8 @@ class GatlingDemoStore(HttpUser):
             login_data["_csrf"] = csrf
         self.client.post("/login", data=login_data)
 
-    def get_all_products(self):
-        self.client.get("/category/all")
+    def get_products_in_category(self, category):
+        self.client.get("/category/{}".format(category))
 
     def add_to_cart(self, item_number):
         self.client.get("/cart/add/{}".format(item_number), name="/cart/add/{item}")
@@ -44,11 +45,11 @@ class GatlingDemoStore(HttpUser):
 
     @task
     def get_all_products_task(self):
-        self.get_all_products()
+        self.get_products_in_category(ProductCategories.all)
 
     @task
     def purchase_workflow(self):  # flow enforced by website
-        self.get_all_products()
+        self.get_products_in_category(ProductCategories.all)
         item = random.randint(19, 25)
         self.add_to_cart(item)
         self.view_cart()
