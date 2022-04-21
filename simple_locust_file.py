@@ -1,3 +1,5 @@
+import random
+
 from locust import HttpUser, task
 from bs4 import BeautifulSoup
 
@@ -25,7 +27,7 @@ class GatlingDemoStore(HttpUser):
         self.client.get("/category/all")
 
     def add_to_cart(self, item_number):
-        self.client.get("/cart/add/{}".format(item_number))
+        self.client.get("/cart/add/{}".format(item_number), name="/cart/add/{item}")
 
     @task
     def login_task(self):
@@ -37,4 +39,5 @@ class GatlingDemoStore(HttpUser):
 
     @task
     def add_to_cart_task(self):
-        self.add_to_cart(17)
+        item = random.randint(19, 25)
+        self.add_to_cart(item)
