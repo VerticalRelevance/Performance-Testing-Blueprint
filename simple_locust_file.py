@@ -4,7 +4,10 @@ from bs4 import BeautifulSoup
 
 def get_csrf_token(html):
     soup = BeautifulSoup(html, 'html.parser')
-    return soup.find(attrs={"name": "_csrf"})["content"]
+    csrf_tag = soup.find(attrs={"name": "_csrf"})
+    if csrf_tag:
+        return csrf_tag["content"]
+    return ""
 
 
 class GatlingDemoStore(HttpUser):
@@ -18,6 +21,14 @@ class GatlingDemoStore(HttpUser):
             login_data["_csrf"] = csrf
         self.client.post("/login", data=login_data)
 
+    def get_category(self):
+        self.client.get("/category/all")
+
     @task
     def login_task(self):
         self.login_store()
+
+    @task
+    def get_category_task(self):
+        self.get_category()
+
