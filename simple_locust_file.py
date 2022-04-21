@@ -24,6 +24,9 @@ class GatlingDemoStore(HttpUser):
     def get_category(self):
         self.client.get("/category/all")
 
+    def add_to_cart(self, item_number):
+        self.client.get("/cart/add/{}".format(item_number))
+
     @task
     def login_task(self):
         self.login_store()
@@ -32,3 +35,6 @@ class GatlingDemoStore(HttpUser):
     def get_category_task(self):
         self.get_category()
 
+    @task
+    def add_to_cart_task(self):
+        self.add_to_cart(17)
