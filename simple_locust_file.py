@@ -27,6 +27,9 @@ class GatlingDemoStoreUser(HttpUser):
     def get_products_in_category(self, category):
         self.client.get("/category/{}".format(category))
 
+    def get_product(self, item):
+        self.client.get("/product/{}".format(item), name="/product/{}")
+
     def add_to_cart(self, item_number):
         self.client.get("/cart/add/{}".format(item_number), name="/cart/add/{item}")
 
@@ -47,6 +50,7 @@ class GatlingDemoStoreUser(HttpUser):
     def get_all_products_task(self):
         self.get_products_in_category(ProductCategories.all)
 
+    # should probably add some waits to these workflows
     @task
     def purchase_workflow(self):  # flow enforced by website
         self.get_products_in_category(ProductCategories.all)
@@ -54,3 +58,10 @@ class GatlingDemoStoreUser(HttpUser):
         self.add_to_cart(item)
         self.view_cart()
         self.checkout()
+
+    @task
+    def browse_workflow(self):
+        self.get_products_in_category(ProductCategories.for_him)
+        available_products = ["casual-black-blue", "black-and-red-glasses"]
+        item_key = random.choice(available_products)
+        self.get_product(item_key)
