@@ -1,20 +1,14 @@
 import random
+import time
 
-from bs4 import BeautifulSoup
-from locust import HttpUser, task
+from locust import HttpUser, task, between
 from demo_store_constants import ProductCategories
-
-
-def get_csrf_token(html):
-    soup = BeautifulSoup(html, 'html.parser')
-    csrf_tag = soup.find(attrs={"name": "_csrf"})
-    if csrf_tag:
-        return csrf_tag["content"]
-    return ""
+from utils.html_parser import get_csrf_token
 
 
 class StorefrontUser(HttpUser):
     host = "https://demostore.gatling.io"
+    wait_time = between(0.5, 2)
 
     def login_store(self):
         login_data = {"username": "john", "password": "pass"}
@@ -22,6 +16,7 @@ class StorefrontUser(HttpUser):
             html = response.raw
             csrf = get_csrf_token(html)
             login_data["_csrf"] = csrf
+        time.sleep(0.1)
         self.client.post("/login", data=login_data)
 
     def get_products_in_category(self, category):
@@ -54,14 +49,24 @@ class StorefrontUser(HttpUser):
     @task
     def purchase_workflow(self):  # flow enforced by website
         self.get_products_in_category(ProductCategories.all)
+        time.sleep(1)
         item = random.randint(19, 25)
         self.add_to_cart(item)
+        time.sleep(0.5)
         self.view_cart()
+        time.sleep(0.5)
         self.checkout()
+        time.sleep(0.5)
 
     @task
     def browse_workflow(self):
         self.get_products_in_category(ProductCategories.for_him)
+        time.sleep(2)
         available_products = ["casual-black-blue", "black-and-red-glasses"]
         item_key = random.choice(available_products)
         self.get_product(item_key)
+        time.sleep(0.5)
+        available_products = ["casual-black-blue", "black-and-red-glasses"]
+        item_key = random.choice(available_products)
+        self.get_product(item_key)
+        time.sleep(0.5)
