@@ -13,7 +13,7 @@ def get_csrf_token(html):
     return ""
 
 
-class GatlingDemoStoreUser(HttpUser):
+class StorefrontUser(HttpUser):
     host = "https://demostore.gatling.io"
 
     def login_store(self):
