@@ -8,8 +8,8 @@ class CategoryTester(HttpUser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.categories = Category(self.client)
+        self._categories = Category(self.client)
 
     @task
     def get_all(self):
-        self.categories.get_category()
+        self._categories.get_category()
