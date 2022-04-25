@@ -14,4 +14,5 @@ class Categories:
 
     def get_by_id(self):
         category_id = random.choice(self.category_ids)
-        self.client.get(self.endpoint + "/{}".format(category_id), headers=self.headers)
+        path = self.endpoint + "/{}".format(category_id)
+        self.client.get(path, headers=self.headers)

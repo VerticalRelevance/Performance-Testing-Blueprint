@@ -1,4 +1,4 @@
-from locust import HttpUser, task, constant_throughput, events
+from locust import HttpUser, task, constant_throughput
 from components.categories import Categories
 
 
