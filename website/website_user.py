@@ -1,12 +1,19 @@
+import random
 import time
 
 from utils.html_parser import get_csrf_token
+from components.product import Product
 
 
 class WebsiteUser:
 
     def __init__(self, client):
         self.client = client
+        self.product = Product(client)
+        self.get_product_by_category = [
+            self.product.get_product_for_him,
+            self.product.get_product_for_her,
+            self.product.get_product_for_unisex]
 
     def login_store(self):
         login_data = {"username": "john", "password": "pass"}
@@ -17,8 +24,8 @@ class WebsiteUser:
         time.sleep(0.1)
         self.client.post("/login", data=login_data)
 
-    def get_products_in_category(self, category):
-        self.client.get("/category/{}".format(category))
+    def get_products_in_category(self):
+        random.choice(self.get_product_by_category)()
 
     def get_product(self, item):
         self.client.get("/product/{}".format(item), name="/product/{}")
