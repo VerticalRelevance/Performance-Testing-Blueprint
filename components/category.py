@@ -6,10 +6,12 @@ class Category:
     def __init__(self, client):
         self.client = client
         self.headers = {"accept": "application/json"}
-        self.endpoint = "/category/{}"
+        self.endpoint = "/category/{}?page={}"
         self.category_ids = ["all", "for-him", "for-her", "unisex"]
+        self.pages = range(2)
 
     def get_category(self):
         category_id = random.choice(self.category_ids)
-        path = self.endpoint.format(category_id)
+        page = random.choice(self.pages)
+        path = self.endpoint.format(category_id, page)
         self.client.get(path, headers=self.headers)
