@@ -8,12 +8,12 @@ class CategoriesTester(HttpUser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.api = Categories(self.client)
+        self.categories = Categories(self.client)
 
     @task
     def get_all(self):
-        self.api.get_all()
+        self.categories.get_all()
 
     @task
     def get_by_id(self):
-        self.api.get_by_id()
+        self.categories.get_by_id()
