@@ -22,9 +22,8 @@ class WebsiteRunner(HttpUser):
     def get_all_products_task(self):
         self.user.get_products_in_category(ProductCategories.all)
 
-    # should probably add some waits to these workflows
     @task
-    def purchase_workflow(self):  # flow enforced by website
+    def purchase_workflow(self):
         self.user.get_products_in_category(ProductCategories.all)
         time.sleep(1)
         item = random.randint(19, 25)
