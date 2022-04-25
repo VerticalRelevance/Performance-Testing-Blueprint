@@ -2,7 +2,7 @@ from locust import HttpUser, task, constant_throughput, events
 from components.categories import Categories
 
 
-class ApiTester(HttpUser):
+class CategoriesTester(HttpUser):
     host = "http://demostore.gatling.io"
     wait_time = constant_throughput(1)  # number of @tasks per second per user
 
