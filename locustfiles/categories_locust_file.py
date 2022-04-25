@@ -1,8 +1,8 @@
-from locust import HttpUser, task, constant_throughput
-from apis.categories import Categories
+from locust import HttpUser, task, constant_throughput, events
+from components.categories import Categories
 
 
-class AuthApi(HttpUser):
+class ApiTester(HttpUser):
     host = "http://demostore.gatling.io"
     wait_time = constant_throughput(1)  # number of requests per second per user
 
