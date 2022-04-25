@@ -13,3 +13,11 @@ class ProductsTester(HttpUser):
     @task
     def get_product_for_him(self):
         self.product.get_product_for_him()
+
+    @task
+    def get_product_for_her(self):
+        self.product.get_product_for_her()
+
+    @task
+    def get_product_for_unisex(self):
+        self.product.get_product_for_unisex()
