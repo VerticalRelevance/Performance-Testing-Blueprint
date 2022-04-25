@@ -1,0 +1,15 @@
+from locust import HttpUser, task, constant_throughput
+from components.product import Product
+
+
+class ProductsTester(HttpUser):
+    host = "http://demostore.gatling.io"
+    wait_time = constant_throughput(1)  # number of @tasks per second per user
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.product = Product(self.client)
+
+    @task
+    def get_product_for_him(self):
+        self.product.get_product_for_him()
