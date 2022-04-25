@@ -8,16 +8,16 @@ class ProductsTester(HttpUser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.product = Product(self.client)
+        self._product = Product(self.client)
 
     @task
     def get_product_for_him(self):
-        self.product.get_product_for_him()
+        self._product.get_product_for_him()
 
     @task
     def get_product_for_her(self):
-        self.product.get_product_for_her()
+        self._product.get_product_for_her()
 
     @task
     def get_product_for_unisex(self):
-        self.product.get_product_for_unisex()
+        self._product.get_product_for_unisex()
