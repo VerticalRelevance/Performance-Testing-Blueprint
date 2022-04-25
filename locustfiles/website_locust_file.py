@@ -2,7 +2,6 @@ import random
 import time
 
 from locust import HttpUser, task, between
-from demo_store_constants import ProductCategories
 from website.website_user import WebsiteUser
 
 
@@ -12,37 +11,33 @@ class WebsiteRunner(HttpUser):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.user = WebsiteUser(self.client)
+        self._user = WebsiteUser(self.client)
 
     @task
     def login_task(self):
-        self.user.login_store()
+        self._user.login_store()
 
     @task
-    def get_all_products_task(self):
-        self.user.get_products_in_category(ProductCategories.all)
+    def get_some_product(self):
+        self._user.get_random_product()
 
     @task
     def purchase_workflow(self):
-        self.user.get_products_in_category(ProductCategories.all)
+        self._user.get_random_product()
         time.sleep(1)
         item = random.randint(19, 25)
-        self.user.add_to_cart(item)
+        self._user.add_to_cart(item)
         time.sleep(0.5)
-        self.user.view_cart()
+        self._user.view_cart()
         time.sleep(0.5)
-        self.user.checkout()
+        self._user.checkout()
         time.sleep(0.5)
 
     @task
     def browse_workflow(self):
-        self.user.get_products_in_category(ProductCategories.for_him)
+        self._user.get_random_product()
         time.sleep(2)
-        available_products = ["casual-black-blue", "black-and-red-glasses"]
-        item_key = random.choice(available_products)
-        self.user.get_product(item_key)
+        self._user.get_random_product()
         time.sleep(0.5)
-        available_products = ["casual-black-blue", "black-and-red-glasses"]
-        item_key = random.choice(available_products)
-        self.user.get_product(item_key)
+        self._user.get_random_product()
         time.sleep(0.5)
