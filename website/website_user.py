@@ -10,7 +10,7 @@ class WebsiteUser:
 
     def __init__(self, client):
         self._client = client
-        self._cart = Cart()
+        self._cart = Cart(client)
         self._product = Product(client)
         self._get_product = [
             self._product.get_product_for_him,
