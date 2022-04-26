@@ -17,7 +17,7 @@ class Product:
                                      "plain-white", "white-leopard-pattern"]
 
     def _get_product(self, path):
-        self._client.get(path, headers=self._headers)
+        self._client.get(path, headers=self._headers, name=self._endpoint)
 
     def get_product_for_him(self):
         product = random.choice(self._products_for_him)
