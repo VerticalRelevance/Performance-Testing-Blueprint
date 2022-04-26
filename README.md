@@ -5,6 +5,20 @@ Blueprint for performance testing foundation.
 
 Locust is the performance testing tool chosen for this blueprint. While this blueprint will focus on implementing the performance tests regardless of the tool chosen, this section will cover some things specific to Locust to get those out of the way, so that the rest of the sections can focus on implementing the recommendations found in the playbook.
 
+## Repo structure
+
+This repo has the following directories based on the recommendations in the playbook.
+
+`components` These are the files that make the calls to each service. Separated here by resources. Imagine each of the components here having its own prod repo and pipeline associated with it.
+
+`locustfiles` These are the entrypoints into the performance test framework; here it is locust.
+
+`pipeline` These are the scripts that would run in the pipeline of the prod code (system under test.)
+
+`utils` Performance testing utils.
+
+`website` This is where workflows through the website are defined. Note how these tests consume the component tests.
+
 ## Pipeline Tests
 
 These (component) tests run in the pipeline of the service being tested. The goal here is to have a baseline of tests that must pass in order to prevent performance regressions. **_These things_** cover the pipeline tests.
