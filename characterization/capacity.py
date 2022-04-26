@@ -1,4 +1,7 @@
+import queue
+
 from locust import TaskSet, task, HttpUser, constant_throughput, LoadTestShape
+
 from components.category import Category
 
 
@@ -9,6 +12,7 @@ class UserTasks(TaskSet):
     @task
     def get_category(self):
         Category(self.client).get_category()  # TODO: inject other components and user journeys
+        DataCaptor.set_number_of_failures(self.user.environment.stats.num_failures)
 
 
 class Configuration:
@@ -16,11 +20,30 @@ class Configuration:
     Config values in a single place that control the shape of the load
     """
     user_throughput = 1  # number of tasks every second per user
-    time_limit = 30  # in seconds
+    time_limit = 300  # in seconds
     initial_number_of_users = 1
-    spawn_rate = 1
-    dwell = 10  # seconds to wait for an increase in number of users
-    max_users = 20
+    spawn_rate = 4
+    dwell = 5  # seconds to wait for an increase in number of users
+    max_users = 30
+    failure_rate_threshold = 2  # in failures per second
+
+
+class DataCaptor:
+    """
+    I pass data between various concerns
+    """
+    _number_of_failures = 0
+    _previous_number_of_failures = 0
+
+    @classmethod
+    def set_number_of_failures(cls, number_of_failures):
+        cls._previous_number_of_failures = cls._number_of_failures
+        cls._number_of_failures = number_of_failures
+
+    @classmethod
+    def calculate_failures_per_second(cls):
+        failures_per_second = cls._number_of_failures - cls._previous_number_of_failures
+        return failures_per_second
 
 
 class WebsiteUser(HttpUser):
@@ -46,14 +69,22 @@ class Capacity(LoadTestShape):
         :return: Tuple of number of users and spawn rate.
         """
         run_time = self.get_run_time()
+        print("tick")
+        print("current failures per second: {}".format(DataCaptor.calculate_failures_per_second()))
 
         if run_time > Configuration.time_limit:  # stop at end of time limit
             print("Time limit of {} seconds reached. Stopping run.".format(Configuration.time_limit))
             return None
-        if self._number_of_users > Configuration.max_users:
+
+        if self._number_of_users > Configuration.max_users: # stop when max users exceeded
             print("Max users exceeded. Stopping run at {} of {} users generated."
                   .format(self._number_of_users, Configuration.max_users))
             return None
+
+        if DataCaptor.calculate_failures_per_second() > Configuration.failure_rate_threshold:
+            print("Failure rate exceeded threshold. Stopping run.")
+            return None
+
         if self._tick_counter == Configuration.dwell:  # add users if dwell reached
             self._number_of_users += Configuration.spawn_rate
             self._tick_counter = 0
