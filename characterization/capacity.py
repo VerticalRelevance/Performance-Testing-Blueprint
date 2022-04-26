@@ -22,10 +22,11 @@ class Configuration:
     user_throughput = 1  # number of tasks every second per user
     time_limit = 300  # in seconds
     initial_number_of_users = 1
-    spawn_rate = 4
-    dwell = 5  # seconds to wait for an increase in number of users
-    max_users = 30
+    spawn_rate = 1
+    dwell = 10  # seconds to wait for an increase in number of users
+    max_users = 50
     failure_rate_threshold = 2  # in failures per second
+    action_on_failure = "back_off"
 
 
 class DataCaptor:
@@ -70,8 +71,6 @@ class Capacity(LoadTestShape):
         """
         run_time = self.get_run_time()
         failure_rate = DataCaptor.calculate_failures_per_second()
-        print("tick")
-        print("current failures per second: {}".format(failure_rate))
 
         if run_time > Configuration.time_limit:  # stop at end of time limit
             print("Time limit of {} seconds reached. Stopping run.".format(Configuration.time_limit))
@@ -83,11 +82,24 @@ class Capacity(LoadTestShape):
             return None
 
         if failure_rate > Configuration.failure_rate_threshold:
-            print("Failure rate exceeded threshold. Stopping run.")
-            return None
+            if Configuration.action_on_failure != "back_off":
+                print("Failure rate exceeded threshold. Stopping run.")
+                return None
+            if self._tick_counter == Configuration.dwell:  # remove users if dwell reached
+                if Configuration.spawn_rate == 1:
+                    self._number_of_users -= 1
+                    Configuration.spawn_rate = 0
+                    self._tick_counter = 0
+                    return self._number_of_users, Configuration.spawn_rate
+                Configuration.spawn_rate /= 2
+                self._number_of_users -= Configuration.spawn_rate
+                self._tick_counter = 0
+                return self._number_of_users, Configuration.spawn_rate
 
         if self._tick_counter == Configuration.dwell:  # add users if dwell reached
+            Configuration.spawn_rate *= 2
             self._number_of_users += Configuration.spawn_rate
             self._tick_counter = 0
         self._tick_counter += 1
+
         return self._number_of_users, Configuration.spawn_rate
