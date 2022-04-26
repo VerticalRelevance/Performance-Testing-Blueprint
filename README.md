@@ -23,8 +23,8 @@ This repo has the following directories based on the recommendations in the play
 
 ## Pipeline Tests
 
-These (component) tests run in the pipeline of the service being tested. The goal here is to have a baseline of tests that must pass in order to prevent performance regressions. **_These things_** cover the pipeline tests.
+These (component) tests run in the pipeline of the service being tested. The goal here is to have a baseline of tests that must pass in order to prevent performance regressions. **_These things_** cover the pipeline tests. The pipeline tests implement a shell script runner. This shell script is responsible for calling initiating Locust, capturing the configuration, and collecting the reports. See the `pipeline` folder for examples.
 
 ## Characterization Tests
 
-These are the longer running tests. That characterize the system under test using the types of performance tests mentioned in the playbook. **_These things_** cover the characterization tests.
+These are the longer running tests. That characterize the system under test using the types of performance tests mentioned in the playbook. **_These things_** cover the characterization tests. Currently, WIP.
