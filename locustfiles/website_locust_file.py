@@ -13,6 +13,7 @@ class WebsiteRunner(HttpUser):
         super().__init__(*args, **kwargs)
         self._user = WebsiteUser(self.client)
 
+    # TODO: pull out these user journeys for characterizations
     @task
     def login_task(self):
         self._user.login_store()
