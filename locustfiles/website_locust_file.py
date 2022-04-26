@@ -40,3 +40,17 @@ class WebsiteRunner(HttpUser):
         time.sleep(0.5)
         self._user.get_random_product()
         time.sleep(0.5)
+
+    @task
+    def abandon_cart(self):
+        self._user.get_random_product()
+        time.sleep(2)
+        self._user.add_to_cart()
+        time.sleep(1)
+        self._user.get_random_product()
+        time.sleep(0.5)
+        self._user.add_to_cart()
+        time.sleep(1)
+        self._user.get_random_product()
+        time.sleep(0.5)
+        self._user.add_to_cart()
