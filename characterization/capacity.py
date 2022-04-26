@@ -37,12 +37,12 @@ class DataCaptor:
 
     @classmethod
     def set_number_of_failures(cls, number_of_failures):
-        cls._previous_number_of_failures = cls._number_of_failures
         cls._number_of_failures = number_of_failures
 
     @classmethod
     def calculate_failures_per_second(cls):
         failures_per_second = cls._number_of_failures - cls._previous_number_of_failures
+        cls._previous_number_of_failures = cls._number_of_failures
         return failures_per_second
 
 
@@ -69,8 +69,9 @@ class Capacity(LoadTestShape):
         :return: Tuple of number of users and spawn rate.
         """
         run_time = self.get_run_time()
+        failure_rate = DataCaptor.calculate_failures_per_second()
         print("tick")
-        print("current failures per second: {}".format(DataCaptor.calculate_failures_per_second()))
+        print("current failures per second: {}".format(failure_rate))
 
         if run_time > Configuration.time_limit:  # stop at end of time limit
             print("Time limit of {} seconds reached. Stopping run.".format(Configuration.time_limit))
@@ -81,7 +82,7 @@ class Capacity(LoadTestShape):
                   .format(self._number_of_users, Configuration.max_users))
             return None
 
-        if DataCaptor.calculate_failures_per_second() > Configuration.failure_rate_threshold:
+        if failure_rate > Configuration.failure_rate_threshold:
             print("Failure rate exceeded threshold. Stopping run.")
             return None
 
