@@ -3,12 +3,14 @@ import time
 
 from utils.html_parser import get_csrf_token
 from components.product import Product
+from components.cart import Cart
 
 
 class WebsiteUser:
 
     def __init__(self, client):
         self._client = client
+        self._cart = Cart()
         self._product = Product(client)
         self._get_product = [
             self._product.get_product_for_him,
@@ -27,14 +29,14 @@ class WebsiteUser:
     def get_random_product(self):
         random.choice(self._get_product)()
 
-    def add_to_cart(self, item_number):
-        self._client.get("/cart/add/{}".format(item_number), name="/cart/add/{item}")
+    def add_to_cart(self):
+        self._cart.add_to_cart()
 
     def view_cart(self):
-        self._client.get("/cart/view")
+        self._cart.view_cart()
 
     def checkout(self):
-        self._client.get("/cart/checkout")
+        self._cart.checkout()
 
     def clear_cart(self):
-        self._client.get("/cart/clear")
+        self._cart.clear_cart()

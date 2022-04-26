@@ -25,8 +25,7 @@ class WebsiteRunner(HttpUser):
     def purchase_workflow(self):
         self._user.get_random_product()
         time.sleep(1)
-        item = random.randint(19, 25)
-        self._user.add_to_cart(item)
+        self._user.add_to_cart()
         time.sleep(0.5)
         self._user.view_cart()
         time.sleep(0.5)
