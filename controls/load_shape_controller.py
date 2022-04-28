@@ -4,6 +4,7 @@ from dataclasses import dataclass
 @dataclass
 class LocustState:
     run_time: int
+    number_of_failures: int
 
 
 @dataclass
@@ -16,10 +17,12 @@ class Configuration:
     initial_spawn_rate: int  # number of users to increase at a time
     max_number_if_users: int  # number of users to not exceed
     time_limit: int  # seconds
+    failure_rate_threshold: int  # failures per second
 
 
 @dataclass
 class ControllerState:
+    previous_number_of_failures = 0
     number_of_users: int
     spawn_rate: int
 
@@ -35,13 +38,7 @@ class LoadShapeController:
     initial_dwell:
 
     Configuration variables:
-    user_throughput: number of tasks every second per user
-    time_limit: Run finishes when exceeded
-    initial_number_of_users
-    initial_spawn_rate: number of users to add or remove at a time
     initial_dwell: number of seconds to wait for a possible change in number of users
-    max_users: Run finishes when exceeded
-    failure_rate_threshold: Stop run or ramp down when exceeded. See action_on_failure.
     action_on_failure: 'back_off' -> ramp down when failure_rate_threshold is exceeded. any other value -> stop
     """
 
@@ -60,9 +57,16 @@ class LoadShapeController:
         if locust_state.run_time > self.configuration.time_limit:
             self.message = "Time limit of {} seconds exceeded. Stopping run.".format(self.configuration.time_limit)
             return None
+
         if self.state.number_of_users > self.configuration.max_number_if_users:
             self.message = "Max users exceeded. Stopping run at {} of {} users generated.".format(
-                self.state.number_of_users, self.configuration.max_number_if_users
-            )
+                self.state.number_of_users, self.configuration.max_number_if_users)
             return None
+
+        failure_rate = locust_state.number_of_failures - self.state.previous_number_of_failures
+        self.state.previous_number_of_failures = locust_state.number_of_failures
+        if failure_rate > self.configuration.failure_rate_threshold:
+            self.message = "Failure rate of {} per second exceeds threshold of {} per second. Stopping.".format(
+                failure_rate, self.configuration.failure_rate_threshold)
+
         return self.state.number_of_users, self.state.spawn_rate
