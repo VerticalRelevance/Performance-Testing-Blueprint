@@ -46,7 +46,13 @@ class LoadShapeController:
         self.configuration = configuration
         self.state = initial_state
 
-    def calculate(self, external_state: LocustState):
-        if external_state.run_time > self.configuration.time_limit:
+    def calculate(self, locust_state: LocustState):
+        """
+        Uses locust_state, controller_state, and configuration to calculate the number of users and spawn rate.
+        Intended to be used inside Locust's LoadTestShape class tick method.
+        :param locust_state: state managed by locust
+        :return: A tuple of: (number_of_users, spawn_rate). The tick method inside Locust's LoadTestShape returns this.
+        """
+        if locust_state.run_time > self.configuration.time_limit:
             self.message = "Time limit of {} seconds exceeded. Stopping run.".format(self.configuration.time_limit)
-        return True
+        return None
