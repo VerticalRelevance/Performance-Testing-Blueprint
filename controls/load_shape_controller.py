@@ -29,6 +29,7 @@ class ControllerState:
     #  Locust tick is a little more than 1s. Will affect long runs.
     #  Might only affect dwells of around 1000s being off 10s of seconds
     tick_counter = 0  # 1 tick = 1 second
+    isStopping = False
     number_of_users: int
     spawn_rate: int
     dwell: int
@@ -45,12 +46,11 @@ class LoadShapeController:
 
     def __init__(self, configuration: Configuration):
         self.message = None
-        self.isStopping = False
         self.configuration = configuration
-        self.state = ControllerState \
-            (configuration.initial_number_of_users,
-             configuration.initial_spawn_rate,
-             configuration.initial_dwell)
+        self.state = ControllerState(
+            configuration.initial_number_of_users,
+            configuration.initial_spawn_rate,
+            configuration.initial_dwell)
 
     def calculate(self, locust_state: LocustState):
         """
@@ -61,7 +61,7 @@ class LoadShapeController:
         """
         self.state.tick_counter += 1
         self.check_stop_conditions(locust_state)
-        if self.isStopping:
+        if self.state.isStopping:
             return None
         self.calculate_number_of_users()
         return self.state.number_of_users, self.state.spawn_rate
@@ -88,15 +88,15 @@ class LoadShapeController:
                 return
             self.message = "Failure rate of {} per second exceeds threshold of {} per second. Stopping.".format(
                 failure_rate, self.configuration.failure_rate_threshold)
-            self.isStopping = True
+            self.state.isStopping = True
 
     def check_max_users_exceeded(self):
         if self.state.number_of_users > self.configuration.max_number_if_users:
             self.message = "Max users exceeded. Stopping run at {} of {} users generated.".format(
                 self.state.number_of_users, self.configuration.max_number_if_users)
-            self.isStopping = True
+            self.state.isStopping = True
 
     def check_time_limit_exceeded(self, locust_state):
         if locust_state.run_time > self.configuration.time_limit:
             self.message = "Time limit of {} seconds exceeded. Stopping run.".format(self.configuration.time_limit)
-            self.isStopping = True
+            self.state.isStopping = True
