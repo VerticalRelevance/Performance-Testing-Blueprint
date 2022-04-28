@@ -17,7 +17,8 @@ class Configuration:
 
 @dataclass
 class ControllerState:
-    unused: str
+    number_of_users = 1
+    spawn_rate = 1
 
 
 class LoadShapeController:
@@ -55,4 +56,5 @@ class LoadShapeController:
         """
         if locust_state.run_time > self.configuration.time_limit:
             self.message = "Time limit of {} seconds exceeded. Stopping run.".format(self.configuration.time_limit)
-        return None
+            return None
+        return self.state.number_of_users, self.state.spawn_rate
