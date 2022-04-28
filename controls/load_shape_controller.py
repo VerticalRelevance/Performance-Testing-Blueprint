@@ -13,15 +13,15 @@ class Configuration:
     """
     user_throughput = 1
     initial_number_of_users: int
-    spawn_rate: int  # number of users to increase at a time
+    initial_spawn_rate: int  # number of users to increase at a time
     max_number_if_users: int  # number of users to not exceed
     time_limit: int  # seconds
 
 
 @dataclass
 class ControllerState:
-    number_of_users = 1
-    spawn_rate = 1
+    number_of_users: int
+    spawn_rate: int
 
 
 class LoadShapeController:
@@ -45,10 +45,10 @@ class LoadShapeController:
     action_on_failure: 'back_off' -> ramp down when failure_rate_threshold is exceeded. any other value -> stop
     """
 
-    def __init__(self, configuration: Configuration, initial_state: ControllerState):
+    def __init__(self, configuration: Configuration):
         self.message = None
         self.configuration = configuration
-        self.state = initial_state
+        self.state = ControllerState(configuration.initial_number_of_users, configuration.initial_spawn_rate)
 
     def calculate(self, locust_state: LocustState):
         """
