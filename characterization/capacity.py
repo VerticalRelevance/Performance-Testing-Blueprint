@@ -1,5 +1,3 @@
-import queue
-
 from locust import TaskSet, task, HttpUser, constant_throughput, LoadTestShape
 
 from components.category import Category
