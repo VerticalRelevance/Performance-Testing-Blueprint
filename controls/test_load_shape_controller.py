@@ -89,3 +89,19 @@ class TestLoadShapeController:
         assert message_t0 is None
         assert message_t1 is None
         assert message_t2 == "Failure rate of 2 per second exceeds threshold of 1 per second. Stopping."
+
+    def test_calculate_stops_load_generation_when_failure_rate_exceeded(self):
+        config = build_default_configuration()
+        config.failure_rate_threshold = 1
+        shaper = LoadShapeController(config)
+        locust_state_t0 = LocustState(0, 0)
+        locust_state_t1 = LocustState(0, 1)
+        locust_state_t2 = LocustState(0, 3)
+
+        number_users_spawn_rate_tuple_t0 = shaper.calculate(locust_state_t0)
+        number_users_spawn_rate_tuple_t1 = shaper.calculate(locust_state_t1)
+        number_users_spawn_rate_tuple_t2 = shaper.calculate(locust_state_t2)
+
+        assert number_users_spawn_rate_tuple_t0 == (1, 1)
+        assert number_users_spawn_rate_tuple_t1 == (1, 1)
+        assert number_users_spawn_rate_tuple_t2 is None

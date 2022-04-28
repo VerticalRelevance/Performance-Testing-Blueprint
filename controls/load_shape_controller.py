@@ -68,5 +68,6 @@ class LoadShapeController:
         if failure_rate > self.configuration.failure_rate_threshold:
             self.message = "Failure rate of {} per second exceeds threshold of {} per second. Stopping.".format(
                 failure_rate, self.configuration.failure_rate_threshold)
+            return None
 
         return self.state.number_of_users, self.state.spawn_rate
