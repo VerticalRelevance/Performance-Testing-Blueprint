@@ -7,7 +7,6 @@ def build_default_configuration():
 
 class TestLoadShapeController:
 
-    # TODO: extern this test it tests Configuration class not the LoadShapeController
     def test_user_throughput_equals_1(self):
         config = build_default_configuration()
         initial_state = ControllerState()
