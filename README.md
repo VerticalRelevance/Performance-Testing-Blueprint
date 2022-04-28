@@ -22,6 +22,10 @@ This repo has the following directories based on the recommendations in the play
 
 `website` This is where workflows through the website are defined. Note how these tests consume the component tests.
 
+`characterization` These are where the characterization code for the various types of performance tests live.
+
+`controls` This is where control logic lives, e.g. automated load shaping.
+
 ## Pipeline Tests
 
 These (component) tests run in the pipeline of the service being tested. The goal here is to have a baseline of tests that must pass in order to prevent performance regressions. **_These things_** cover the pipeline tests. The pipeline tests implement a shell script runner. This shell script is responsible for calling initiating Locust, capturing the configuration, and collecting the reports. See the `pipeline` folder for examples.
@@ -34,4 +38,4 @@ These are the longer running tests. That characterize the system under test usin
 
 ### There are many things going on here. Where to I start building this out on a project?
 
-
+### Where can I look to discover how I can start fully automating my performance tests?
