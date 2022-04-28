@@ -32,6 +32,10 @@ class LoadShapeController:
 
 @dataclass
 class Configuration:
+    """
+    Stores configuration for load shap controller
+    """
+    user_throughput = 1
     time_limit: int  # seconds
 
 

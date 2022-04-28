@@ -20,6 +20,11 @@ class TestLoadShapeController:
 
         assert time_exceeded
 
+    def test_user_throughput_equals_1(self):
+        config = Configuration(1)
+        initial_state = State("unused")
+        shaper = LoadShapeController(config, initial_state)
 
+        assert 1 == shaper.configuration.user_throughput
 
 
