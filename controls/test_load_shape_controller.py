@@ -2,7 +2,7 @@ from controls.load_shape_controller import LoadShapeController, Configuration, L
 
 
 def build_default_configuration():
-    return Configuration(1, 1, 1, 1, 0)
+    return Configuration(1, 1, 10, 10, 1, 0)
 
 
 class TestLoadShapeController:
@@ -105,3 +105,16 @@ class TestLoadShapeController:
         assert number_users_spawn_rate_tuple_t0 == (1, 1)
         assert number_users_spawn_rate_tuple_t1 == (1, 1)
         assert number_users_spawn_rate_tuple_t2 is None
+
+    def test_calculate_increases_number_of_users_when_dwell_reached(self):
+        config = build_default_configuration()
+        config.initial_dwell = 1
+        shaper = LoadShapeController(config)
+        locust_state_t0 = LocustState(0, 0)
+        locust_state_t1 = LocustState(1, 0)
+
+        number_users_spawn_rate_tuple_t0 = shaper.calculate(locust_state_t0)
+        number_users_spawn_rate_tuple_t1 = shaper.calculate(locust_state_t1)
+
+        assert number_users_spawn_rate_tuple_t0 == (1, 1)
+        assert number_users_spawn_rate_tuple_t1 == (2, 1)

@@ -15,6 +15,7 @@ class Configuration:
     user_throughput = 1
     initial_number_of_users: int
     initial_spawn_rate: int  # number of users to increase at a time
+    initial_dwell: int  # number of seconds to hold before changing number of users
     max_number_if_users: int  # number of users to not exceed
     time_limit: int  # seconds
     failure_rate_threshold: int  # failures per second
@@ -23,8 +24,13 @@ class Configuration:
 @dataclass
 class ControllerState:
     previous_number_of_failures = 0
+    #  TODO: consider change from tick counts to seconds for time calculations
+    #  Locust tick is a little more than 1s. Will affect long runs.
+    #  Might only affect dwells of around 1000s being off 10s of seconds
+    tick_counter = 0 # 1 tick = 1 second
     number_of_users: int
     spawn_rate: int
+    dwell: int
 
 
 class LoadShapeController:
@@ -45,7 +51,10 @@ class LoadShapeController:
     def __init__(self, configuration: Configuration):
         self.message = None
         self.configuration = configuration
-        self.state = ControllerState(configuration.initial_number_of_users, configuration.initial_spawn_rate)
+        self.state = ControllerState\
+            (configuration.initial_number_of_users,
+             configuration.initial_spawn_rate,
+             configuration.initial_dwell)
 
     def calculate(self, locust_state: LocustState):
         """
@@ -70,4 +79,7 @@ class LoadShapeController:
                 failure_rate, self.configuration.failure_rate_threshold)
             return None
 
+        if self.state.tick_counter >= self.state.dwell:
+            self.state.number_of_users += self.state.spawn_rate
+        self.state.tick_counter += 1
         return self.state.number_of_users, self.state.spawn_rate
