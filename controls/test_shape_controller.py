@@ -1,30 +1,35 @@
-from controls.load_shape_controller import LoadShapeController, Configuration, State
+from controls.load_shape_controller import LoadShapeController, Configuration, ControllerState, LocustState
+
+
+def build_default_configuration():
+    return Configuration(1)
 
 
 class TestLoadShapeController:
-    def test_is_time_limit_exceeded_returns_false_when_not_exceeded(self):
-        config = Configuration(1)
-        initial_state = State("unused")
+    def test_tick_returns_message_none_when_time_limit_not_exceeded(self):
+        config = build_default_configuration()
+        initial_state = ControllerState("")
         shaper = LoadShapeController(config, initial_state)
+        locust_state = LocustState(1)
 
-        time_exceeded = shaper.is_time_limit_exceeded(1)
+        shaper.calculate(locust_state)
 
-        assert not time_exceeded
+        assert None is shaper.message
 
-    def test_is_time_limit_exceeded_returns_true_when_exceeded(self):
-        config = Configuration(1)
-        initial_state = State("unused")
+    def test_tick_returns_message_time_exceeded_when_time_limit_has_exceeded(self):
+        config = build_default_configuration()
+        initial_state = ControllerState("")
         shaper = LoadShapeController(config, initial_state)
+        locust_state = LocustState(2)
 
-        time_exceeded = shaper.is_time_limit_exceeded(2)
+        shaper.calculate(locust_state)
 
-        assert time_exceeded
+        assert "Time limit of 1 seconds exceeded. Stopping run." == shaper.message
 
+    # extern this test it tests Configuration class not the LoadShapeController
     def test_user_throughput_equals_1(self):
-        config = Configuration(1)
-        initial_state = State("unused")
+        config = build_default_configuration()
+        initial_state = ControllerState("unused")
         shaper = LoadShapeController(config, initial_state)
 
         assert 1 == shaper.configuration.user_throughput
-
-

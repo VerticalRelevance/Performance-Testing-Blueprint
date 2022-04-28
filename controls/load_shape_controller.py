@@ -1,6 +1,25 @@
 from dataclasses import dataclass
 
 
+@dataclass
+class LocustState:
+    run_time: int
+
+
+@dataclass
+class Configuration:
+    """
+    Stores configuration for load shap controller
+    """
+    user_throughput = 1
+    time_limit: int  # seconds
+
+
+@dataclass
+class ControllerState:
+    unused: str
+
+
 class LoadShapeController:
     """
     State variables:
@@ -22,23 +41,12 @@ class LoadShapeController:
     action_on_failure: 'back_off' -> ramp down when failure_rate_threshold is exceeded. any other value -> stop
     """
 
-    def __init__(self, configuration, initial_state):
+    def __init__(self, configuration: Configuration, initial_state: ControllerState):
+        self.message = None
         self.configuration = configuration
         self.state = initial_state
 
-    def is_time_limit_exceeded(self, run_time):
-        return run_time > self.configuration.time_limit
-
-
-@dataclass
-class Configuration:
-    """
-    Stores configuration for load shap controller
-    """
-    user_throughput = 1
-    time_limit: int  # seconds
-
-
-@dataclass
-class State:
-    unused: str
+    def calculate(self, external_state: LocustState):
+        if external_state.run_time > self.configuration.time_limit:
+            self.message = "Time limit of {} seconds exceeded. Stopping run.".format(self.configuration.time_limit)
+        return True
