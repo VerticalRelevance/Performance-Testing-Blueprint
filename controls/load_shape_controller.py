@@ -63,6 +63,7 @@ class LoadShapeController:
         :param locust_state: state managed by locust
         :return: A tuple of: (number_of_users, spawn_rate). The tick method inside Locust's LoadTestShape returns this.
         """
+        self.state.tick_counter += 1
         if locust_state.run_time > self.configuration.time_limit:
             self.message = "Time limit of {} seconds exceeded. Stopping run.".format(self.configuration.time_limit)
             return None
@@ -79,7 +80,7 @@ class LoadShapeController:
                 failure_rate, self.configuration.failure_rate_threshold)
             return None
 
-        if self.state.tick_counter >= self.state.dwell:
+        if self.state.tick_counter > self.state.dwell:
             self.state.number_of_users += self.state.spawn_rate
-        self.state.tick_counter += 1
+            self.state.tick_counter = 0
         return self.state.number_of_users, self.state.spawn_rate
