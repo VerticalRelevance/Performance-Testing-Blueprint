@@ -19,6 +19,7 @@ class Configuration:
     max_number_if_users: int  # number of users to not exceed
     time_limit: int  # seconds
     failure_rate_threshold: int  # failures per second
+    is_enabled_back_off: bool
 
 
 @dataclass
@@ -27,7 +28,7 @@ class ControllerState:
     #  TODO: consider change from tick counts to seconds for time calculations
     #  Locust tick is a little more than 1s. Will affect long runs.
     #  Might only affect dwells of around 1000s being off 10s of seconds
-    tick_counter = 0 # 1 tick = 1 second
+    tick_counter = 0  # 1 tick = 1 second
     number_of_users: int
     spawn_rate: int
     dwell: int
@@ -36,15 +37,9 @@ class ControllerState:
 class LoadShapeController:
     """
     State variables:
-    tick_counter: Used to calculate dwell. 1 tick = 1 second from locust docs
     is_backing_off: True -> ramp down. False -> ramp up
-    failure_rate
-    number_of_users: number of users present in system generating load (concurrency)
-    spawn_rate:
-    initial_dwell:
 
     Configuration variables:
-    initial_dwell: number of seconds to wait for a possible change in number of users
     action_on_failure: 'back_off' -> ramp down when failure_rate_threshold is exceeded. any other value -> stop
     """
 
@@ -52,7 +47,7 @@ class LoadShapeController:
         self.message = None
         self.isStopping = False
         self.configuration = configuration
-        self.state = ControllerState\
+        self.state = ControllerState \
             (configuration.initial_number_of_users,
              configuration.initial_spawn_rate,
              configuration.initial_dwell)
@@ -73,8 +68,12 @@ class LoadShapeController:
 
     def calculate_number_of_users(self):
         if self.state.tick_counter > self.state.dwell:
-            self.state.number_of_users += self.state.spawn_rate
             self.state.tick_counter = 0
+            if self.configuration.is_enabled_back_off:
+                self.state.spawn_rate /= 2
+                self.state.number_of_users -= self.state.spawn_rate
+                return
+            self.state.number_of_users += self.state.spawn_rate
 
     def check_stop_conditions(self, locust_state):
         self.check_time_limit_exceeded(locust_state)
@@ -85,6 +84,8 @@ class LoadShapeController:
         failure_rate = locust_state.number_of_failures - self.state.previous_number_of_failures
         self.state.previous_number_of_failures = locust_state.number_of_failures
         if failure_rate > self.configuration.failure_rate_threshold:
+            if self.configuration.is_enabled_back_off:
+                return
             self.message = "Failure rate of {} per second exceeds threshold of {} per second. Stopping.".format(
                 failure_rate, self.configuration.failure_rate_threshold)
             self.isStopping = True

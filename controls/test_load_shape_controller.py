@@ -2,7 +2,7 @@ from controls.load_shape_controller import LoadShapeController, Configuration, L
 
 
 def build_default_configuration():
-    return Configuration(1, 1, 10, 10, 10, 0)
+    return Configuration(1, 1, 10, 10, 10, 0, False)
 
 
 class TestLoadShapeController:
@@ -126,3 +126,19 @@ class TestLoadShapeController:
         assert number_users_spawn_rate_tuple_t1 == (2, 1)
         assert number_users_spawn_rate_tuple_t2 == (2, 1)
         assert number_users_spawn_rate_tuple_t3 == (3, 1)
+
+    def test_can_back_off_when_failure_threshold_exceeded(self):
+        config = build_default_configuration()
+        config.is_enabled_back_off = True
+        config.initial_number_of_users = 5
+        config.initial_spawn_rate = 2
+        config.initial_dwell = 1
+        shaper = LoadShapeController(config)
+        locust_state_t0 = LocustState(0, 0)
+        locust_state_t1 = LocustState(1, 1)
+
+        number_users_spawn_rate_tuple_t0 = shaper.calculate(locust_state_t0)
+        number_users_spawn_rate_tuple_t1 = shaper.calculate(locust_state_t1)
+
+        assert number_users_spawn_rate_tuple_t0 == (5, 2)
+        assert number_users_spawn_rate_tuple_t1 == (4, 1)
