@@ -50,6 +50,7 @@ class LoadShapeController:
 
     def __init__(self, configuration: Configuration):
         self.message = None
+        self.isStopping = False
         self.configuration = configuration
         self.state = ControllerState\
             (configuration.initial_number_of_users,
@@ -64,23 +65,37 @@ class LoadShapeController:
         :return: A tuple of: (number_of_users, spawn_rate). The tick method inside Locust's LoadTestShape returns this.
         """
         self.state.tick_counter += 1
-        if locust_state.run_time > self.configuration.time_limit:
-            self.message = "Time limit of {} seconds exceeded. Stopping run.".format(self.configuration.time_limit)
+        self.check_stop_conditions(locust_state)
+        if self.isStopping:
             return None
+        self.calculate_number_of_users()
+        return self.state.number_of_users, self.state.spawn_rate
 
-        if self.state.number_of_users > self.configuration.max_number_if_users:
-            self.message = "Max users exceeded. Stopping run at {} of {} users generated.".format(
-                self.state.number_of_users, self.configuration.max_number_if_users)
-            return None
+    def calculate_number_of_users(self):
+        if self.state.tick_counter > self.state.dwell:
+            self.state.number_of_users += self.state.spawn_rate
+            self.state.tick_counter = 0
 
+    def check_stop_conditions(self, locust_state):
+        self.check_time_limit_exceeded(locust_state)
+        self.check_max_users_exceeded()
+        self.check_failure_rate_exceeded(locust_state)
+
+    def check_failure_rate_exceeded(self, locust_state):
         failure_rate = locust_state.number_of_failures - self.state.previous_number_of_failures
         self.state.previous_number_of_failures = locust_state.number_of_failures
         if failure_rate > self.configuration.failure_rate_threshold:
             self.message = "Failure rate of {} per second exceeds threshold of {} per second. Stopping.".format(
                 failure_rate, self.configuration.failure_rate_threshold)
-            return None
+            self.isStopping = True
 
-        if self.state.tick_counter > self.state.dwell:
-            self.state.number_of_users += self.state.spawn_rate
-            self.state.tick_counter = 0
-        return self.state.number_of_users, self.state.spawn_rate
+    def check_max_users_exceeded(self):
+        if self.state.number_of_users > self.configuration.max_number_if_users:
+            self.message = "Max users exceeded. Stopping run at {} of {} users generated.".format(
+                self.state.number_of_users, self.configuration.max_number_if_users)
+            self.isStopping = True
+
+    def check_time_limit_exceeded(self, locust_state):
+        if locust_state.run_time > self.configuration.time_limit:
+            self.message = "Time limit of {} seconds exceeded. Stopping run.".format(self.configuration.time_limit)
+            self.isStopping = True
