@@ -138,7 +138,7 @@ class TestLoadShapeController:
         config = build_default_configuration()
         config.is_enabled_back_off = True
         config.initial_number_of_users = 5
-        config.initial_spawn_rate = 2
+        config.initial_spawn_rate = 4
         config.initial_dwell = 1
         shaper = LoadShapeController(config)
         locust_state_t0 = LocustState(0, 0)
@@ -147,5 +147,5 @@ class TestLoadShapeController:
         number_users_spawn_rate_tuple_t0 = shaper.calculate(locust_state_t0)
         number_users_spawn_rate_tuple_t1 = shaper.calculate(locust_state_t1)
 
-        assert number_users_spawn_rate_tuple_t0 == (5, 2)
+        assert number_users_spawn_rate_tuple_t0 == (5, 4)
         assert number_users_spawn_rate_tuple_t1 == (4, 1)

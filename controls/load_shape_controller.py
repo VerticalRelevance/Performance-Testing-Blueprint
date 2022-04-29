@@ -30,6 +30,7 @@ class ControllerState:
     #  Might only affect dwells of around 1000s being off 10s of seconds
     tick_counter = 0  # 1 tick = 1 second
     isStopping = False
+    isFirstBackOff = True
     failure_rate = 0
     number_of_users: int
     spawn_rate: int
@@ -97,6 +98,9 @@ class LoadShapeController:
         if self.state.tick_counter > self.state.dwell:
             self.state.tick_counter = 1
             if self.configuration.is_enabled_back_off and self.state.failure_rate > 0:
+                if self.state.isFirstBackOff:
+                    self.state.isFirstBackOff = False
+                    self.state.spawn_rate /= 2
                 self.state.spawn_rate /= 2
                 self.state.number_of_users -= self.state.spawn_rate
                 return
