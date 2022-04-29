@@ -2,7 +2,14 @@ from controls.load_shape_controller import LoadShapeController, Configuration, L
 
 
 def build_default_configuration():
-    return Configuration(1, 1, 10, 10, 10, 0, False)
+    return Configuration(
+        initial_number_of_users=1,
+        initial_spawn_rate=1,
+        initial_dwell=10,
+        max_number_of_users=10,
+        time_limit=10,
+        failure_rate_threshold=0,
+        is_enabled_back_off=False)
 
 
 class TestLoadShapeController:
@@ -53,7 +60,7 @@ class TestLoadShapeController:
 
     def test_calculate_returns_message_when_number_max_users_exceeded(self):
         config = build_default_configuration()
-        config.max_number_if_users = 0
+        config.max_number_of_users = 0
         config.initial_number_of_users = 1
         shaper = LoadShapeController(config)
         locust_state = LocustState(0, 0)
@@ -64,7 +71,7 @@ class TestLoadShapeController:
 
     def test_calculate_returns_stops_load_generation_when_number_max_users_exceeded(self):
         config = build_default_configuration()
-        config.max_number_if_users = 0
+        config.max_number_of_users = 0
         config.initial_number_of_users = 1
         shaper = LoadShapeController(config)
         locust_state = LocustState(0, 0)
@@ -123,9 +130,9 @@ class TestLoadShapeController:
         number_users_spawn_rate_tuple_t3 = shaper.calculate(locust_state_t3)
 
         assert number_users_spawn_rate_tuple_t0 == (1, 1)
-        assert number_users_spawn_rate_tuple_t1 == (2, 1)
-        assert number_users_spawn_rate_tuple_t2 == (2, 1)
-        assert number_users_spawn_rate_tuple_t3 == (3, 1)
+        assert number_users_spawn_rate_tuple_t1 == (2, 2)
+        assert number_users_spawn_rate_tuple_t2 == (4, 4)
+        assert number_users_spawn_rate_tuple_t3 == (8, 8)
 
     def test_can_back_off_when_failure_threshold_exceeded(self):
         config = build_default_configuration()
