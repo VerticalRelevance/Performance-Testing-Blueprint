@@ -66,15 +66,6 @@ class LoadShapeController:
         self.calculate_number_of_users()
         return self.state.number_of_users, self.state.spawn_rate
 
-    def calculate_number_of_users(self):
-        if self.state.tick_counter > self.state.dwell:
-            self.state.tick_counter = 0
-            if self.configuration.is_enabled_back_off:
-                self.state.spawn_rate /= 2
-                self.state.number_of_users -= self.state.spawn_rate
-                return
-            self.state.number_of_users += self.state.spawn_rate
-
     def check_stop_conditions(self, locust_state):
         self.check_time_limit_exceeded(locust_state)
         self.check_max_users_exceeded()
@@ -100,3 +91,12 @@ class LoadShapeController:
         if locust_state.run_time > self.configuration.time_limit:
             self.message = "Time limit of {} seconds exceeded. Stopping run.".format(self.configuration.time_limit)
             self.state.isStopping = True
+
+    def calculate_number_of_users(self):
+        if self.state.tick_counter > self.state.dwell:
+            self.state.tick_counter = 0
+            if self.configuration.is_enabled_back_off:
+                self.state.spawn_rate /= 2
+                self.state.number_of_users -= self.state.spawn_rate
+                return
+            self.state.number_of_users += self.state.spawn_rate
