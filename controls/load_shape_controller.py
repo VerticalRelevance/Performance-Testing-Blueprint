@@ -107,7 +107,8 @@ class LoadShapeController:
         if self._state.tick_counter > self._state.dwell:
             self._state.tick_counter = 1
             # TODO: Should use failure_rate_threshold
-            if self._configuration.is_enabled_back_off and self._state.failure_rate > 0:
+            if self._configuration.is_enabled_back_off \
+                    and self._state.failure_rate > self._configuration.failure_rate_threshold:
                 self._state.isBackingOff = True
                 if self._state.isFirstBackOff:
                     self._state.isFirstBackOff = False
@@ -123,7 +124,10 @@ class LoadShapeController:
                     self._state.number_of_users += self._state.spawn_rate
 
     def _update_history(self):
-        if self._state.failure_rate == 0 and self._state.number_of_users > self._state.max_users_without_fails :
+        if self._state.failure_rate == self._configuration.failure_rate_threshold \
+                and self._state.number_of_users > self._state.max_users_without_fails:
             self._state.max_users_without_fails = self._state.number_of_users
-        if self._state.failure_rate > 0 and self._state.number_of_users < self._state.min_users_with_fails:
+
+        if self._state.failure_rate > self._configuration.failure_rate_threshold \
+                and self._state.number_of_users < self._state.min_users_with_fails:
             self._state.min_users_with_fails = self._state.number_of_users
