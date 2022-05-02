@@ -106,6 +106,6 @@ class LoadShapeController:
                     self._state.spawn_rate /= 2
                 self._state.spawn_rate /= 2
                 self._state.number_of_users -= self._state.spawn_rate
-                return
-            self._state.number_of_users += self._state.spawn_rate
-            self._state.spawn_rate *= 2
+            else:
+                self._state.number_of_users += self._state.spawn_rate
+                self._state.spawn_rate *= 2
