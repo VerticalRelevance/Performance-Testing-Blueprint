@@ -1,3 +1,5 @@
+import sys
+
 from dataclasses import dataclass
 
 
@@ -31,7 +33,10 @@ class ControllerState:
     tick_counter = 0  # 1 tick = 1 second
     isStopping = False
     isFirstBackOff = True
+    isBackingOff = False
     failure_rate = 0
+    max_users_without_fails = 0
+    min_users_with_fails = sys.maxsize
     number_of_users: int
     spawn_rate: int
     dwell: int
@@ -65,6 +70,7 @@ class LoadShapeController:
         self._check_stop_conditions(locust_state)
         if self._state.isStopping:
             return None
+        self._update_history()
         self._calculate_number_of_users()
         return self._state.number_of_users, self._state.spawn_rate
 
@@ -100,7 +106,9 @@ class LoadShapeController:
     def _calculate_number_of_users(self):
         if self._state.tick_counter > self._state.dwell:
             self._state.tick_counter = 1
+            # TODO: Should use failure_rate_threshold
             if self._configuration.is_enabled_back_off and self._state.failure_rate > 0:
+                self._state.isBackingOff = True
                 if self._state.isFirstBackOff:
                     self._state.isFirstBackOff = False
                     self._state.spawn_rate /= 2
@@ -109,3 +117,13 @@ class LoadShapeController:
             else:
                 self._state.number_of_users += self._state.spawn_rate
                 self._state.spawn_rate *= 2
+                if self._state.isBackingOff and self._state.number_of_users >= self._state.min_users_with_fails:
+                    self._state.number_of_users -= self._state.spawn_rate / 2
+                    self._state.spawn_rate /= 4
+                    self._state.number_of_users += self._state.spawn_rate
+
+    def _update_history(self):
+        if self._state.failure_rate == 0 and self._state.number_of_users > self._state.max_users_without_fails :
+            self._state.max_users_without_fails = self._state.number_of_users
+        if self._state.failure_rate > 0 and self._state.number_of_users < self._state.min_users_with_fails:
+            self._state.min_users_with_fails = self._state.number_of_users
