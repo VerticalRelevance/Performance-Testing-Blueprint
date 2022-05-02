@@ -18,7 +18,7 @@ class TestLoadShapeController:
         config = build_default_configuration()
         shaper = LoadShapeController(config)
 
-        assert shaper.configuration.user_throughput == 1
+        assert shaper._configuration.user_throughput == 1
 
     def test_calculate_returns_message_none_when_time_limit_not_exceeded(self):
         config = build_default_configuration()
