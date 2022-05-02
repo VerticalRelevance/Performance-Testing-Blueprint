@@ -22,6 +22,7 @@ class Configuration:
     time_limit: int  # seconds
     failure_rate_threshold: int  # failures per second
     is_enabled_back_off: bool
+    user_dead_band: int
 
 
 @dataclass
@@ -70,7 +71,6 @@ class LoadShapeController:
         self._check_stop_conditions(locust_state)
         if self._state.isStopping:
             return None
-        self._update_history()
         self._calculate_number_of_users()
         return self._state.number_of_users, self._state.spawn_rate
 
@@ -106,7 +106,7 @@ class LoadShapeController:
     def _calculate_number_of_users(self):
         if self._state.tick_counter > self._state.dwell:
             self._state.tick_counter = 1
-            # TODO: Should use failure_rate_threshold
+            self._update_history()
             if self._configuration.is_enabled_back_off \
                     and self._state.failure_rate > self._configuration.failure_rate_threshold:
                 self._state.isBackingOff = True
@@ -116,6 +116,9 @@ class LoadShapeController:
                 self._state.spawn_rate /= 2
                 self._state.number_of_users -= self._state.spawn_rate
             else:
+                if self._state.min_users_with_fails - self._state.max_users_without_fails <= \
+                        self._configuration.user_dead_band:
+                    return self._state.number_of_users, self._state.spawn_rate
                 self._state.number_of_users += self._state.spawn_rate
                 self._state.spawn_rate *= 2
                 if self._state.isBackingOff and self._state.number_of_users >= self._state.min_users_with_fails:
