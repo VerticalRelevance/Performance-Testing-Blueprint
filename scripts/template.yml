@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS Cloudformation for creating a Manual Load Testing Environment'
+
+Parameters:
+  PerformanceReportsS3Bucket:
+    Type: String
+  LocustImageRepositoryName:
+    Type: String
+  PerformanceTestUserArn:
+    Type: String
+
+Resources:
+  ReportS3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref PerformanceReportsS3Bucket
+
+  LocustImageRepository:
+    Type: 'AWS::ECR::Repository'
+    Properties:
+      RepositoryName: !Ref LocustImageRepositoryName
+      RepositoryPolicyText:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowPushPull
+            Effect: Allow
+            Principal:
+              AWS:
+                - !Ref PerformanceTestUserArn
+            Action: 
+              - "ecr:GetDownloadUrlForLayer"
+              - "ecr:BatchGetImage"
+              - "ecr:BatchCheckLayerAvailability"
+              - "ecr:PutImage"
+              - "ecr:InitiateLayerUpload"
+              - "ecr:UploadLayerPart"
+              - "ecr:CompleteLayerUpload"
