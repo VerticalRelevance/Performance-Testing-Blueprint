@@ -2,19 +2,12 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'AWS Cloudformation for creating a Manual Load Testing Environment'
 
 Parameters:
-  PerformanceReportsS3Bucket:
-    Type: String
   LocustImageRepositoryName:
     Type: String
   PerformanceTestUserArn:
     Type: String
 
 Resources:
-  ReportS3Bucket:
-    Type: 'AWS::S3::Bucket'
-    Properties:
-      BucketName: !Ref PerformanceReportsS3Bucket
-
   LocustImageRepository:
     Type: 'AWS::ECR::Repository'
     Properties:
