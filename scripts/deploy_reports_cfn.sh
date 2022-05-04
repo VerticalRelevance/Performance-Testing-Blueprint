@@ -4,7 +4,7 @@ template=../templates/reports.yml
 stack_name=PerformanceTestingReports
 reports_s3_bucket_name=performance-test-reports-nchandlersmith
 
-echo Preparing to deploy template reports.yml
+echo Preparing to deploy reports template
 
 echo Linting...
 cfn-lint "$template"

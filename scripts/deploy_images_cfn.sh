@@ -6,7 +6,7 @@ image_repo_name=locust-performance-test
 user_arn="$AWS_PERFORMANCE_TEST_USER_ARN"
 
 
-echo Preparing to deploy template reports.yml
+echo Preparing to deploy images template
 
 echo Linting...
 cfn-lint "$template"
