@@ -1,5 +1,5 @@
 FROM locustio/locust
-COPY . /home/locust/app
-WORKDIR /home/locust/app
+COPY . /mnt/locust
+WORKDIR /mnt/locust
 RUN pip3 install -r requirements.txt
 ENTRYPOINT locust -f characterization/characterization.py
