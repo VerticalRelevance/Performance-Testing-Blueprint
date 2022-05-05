@@ -1,4 +1,4 @@
-f#!/bin/sh
+#!/bin/sh
 
 echo Removing existing locust image
 docker image rm locust:latest
