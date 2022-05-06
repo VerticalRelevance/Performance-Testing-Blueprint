@@ -2,7 +2,7 @@
 
 template=../templates/ecr.yml
 stack_name=PerformanceTestingImageRepo
-repo_name=locust-performance-test
+repo_name=locust-image-performance-test
 user_arn="$AWS_PERFORMANCE_TEST_USER_ARN"
 
 
