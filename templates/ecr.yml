@@ -4,27 +4,10 @@ Description: 'AWS Cloudformation for creating a Manual Load Testing Environment'
 Parameters:
   RepositoryName:
     Type: String
-  PerformanceTestUserArn:
-    Type: String
 
 Resources:
   LocustImageRepository:
     Type: 'AWS::ECR::Repository'
     Properties:
       RepositoryName: !Ref RepositoryName
-      RepositoryPolicyText:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: AllowPushPull
-            Effect: Allow
-            Principal:
-              AWS:
-                - !Ref PerformanceTestUserArn
-            Action: 
-              - "ecr:GetDownloadUrlForLayer"
-              - "ecr:BatchGetImage"
-              - "ecr:BatchCheckLayerAvailability"
-              - "ecr:PutImage"
-              - "ecr:InitiateLayerUpload"
-              - "ecr:UploadLayerPart"
-              - "ecr:CompleteLayerUpload"
+
