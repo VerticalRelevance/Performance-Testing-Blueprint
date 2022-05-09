@@ -10,7 +10,7 @@ loadtest:
   # loadtest.locust_lib_configmap -- name of a configmap containing your lib (default uses the example lib)
   locust_lib_configmap: ""
   # loadtest.locust_host -- the host you will load test
-  locust_host: https://www.google.com
+  locust_host: "https://demostore.gatling.io"
   # loadtest.pip_packages -- a list of extra python pip packages to install
   pip_packages: []
   # loadtest.environment -- environment variables used in the load test for both master and workers
@@ -37,8 +37,8 @@ loadtest:
   locustCmd: "/usr/local/bin/locust"
 
 image:
-  repository: locustio/locust
-  tag: 2.4.0
+  repository: 899456967600.dkr.ecr.us-west-2.amazonaws.com/locust-image-performance-test
+  tag: latest
   pullPolicy: IfNotPresent
 
 service:
@@ -48,7 +48,7 @@ service:
 
 master:
   # master.image -- A custom docker image including tag
-  image: ""
+  image: "899456967600.dkr.ecr.us-west-2.amazonaws.com/locust-image-performance-test:latest"
   # master.logLevel -- Log level. Can be INFO or DEBUG
   logLevel: INFO
   # master.resources -- resources for the locust master
@@ -86,7 +86,7 @@ master:
 
 worker:
   # worker.image -- A custom docker image including tag
-  image: ""
+  image: "899456967600.dkr.ecr.us-west-2.amazonaws.com/locust-image-performance-test:latest"
   # worker.logLevel -- Log level. Can be INFO or DEBUG
   logLevel: INFO
   replicas: 1

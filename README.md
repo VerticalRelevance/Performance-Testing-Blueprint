@@ -12,6 +12,10 @@ Locust docs describe creating something called a locust file. This file is used 
 
 This repo has the following directories based on the recommendations in the playbook.
 
+`characterization` These are where the characterization code for the various types of performance tests live.
+
+`chart` This folder has the helm chart used to deploy to EKS. Using chart from [here](https://github.com/deliveryhero/helm-charts).
+
 `components` These are the files that make the calls to each service. Separated here by resources. Imagine each of the components here having its own prod repo and pipeline associated with it.
 
 `locustfiles` These are the entrypoints into the performance test framework; here it is locust.
@@ -21,8 +25,6 @@ This repo has the following directories based on the recommendations in the play
 `utils` Performance testing utils.
 
 `website` This is where workflows through the website are defined. Note how these tests consume the component tests.
-
-`characterization` These are where the characterization code for the various types of performance tests live.
 
 `controls` This is where control logic lives, e.g. automated load shaping.
 
