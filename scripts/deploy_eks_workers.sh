@@ -1,11 +1,15 @@
 #!/bin/sh
 
+cluster_control_plane_security_group=$1
+subnets=$2
+vpc_id=$3
+
 template=../templates/eks_workers.yml
 stack_name=PerformanceTestingEKSWorkers
 
 # things from the control plane stack
 cluster_name=PerformanceTestingControlPlane
-key_name=EKSWorkersKey
+key_name=PerformanceTestEKSWorkersKey
 desired_capacity=1
 max_capacity=3
 min_capacity=1
@@ -13,9 +17,6 @@ worker_node_group_name=PerformanceTestWorkers
 node_instance_type=t3.micro
 node_volume_size=8
 # These three come from control plan
-cluster_control_plane_security_group=sg-05134c68fb6c4a287
-subnets=subnet-06131d9b35c5e3eec,subnet-08710858dcf04c97a,subnet-0fc6f3f75ff5d142e,subnet-0faa75694a234d0e0
-vpc_id=vpc-0065967fbb6fba9ba
 
 echo Preparing to deploy eks template
 
