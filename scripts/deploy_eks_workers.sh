@@ -14,7 +14,7 @@ desired_capacity=1
 max_capacity=3
 min_capacity=1
 worker_node_group_name=PerformanceTestWorkers
-node_instance_type=t3.micro
+node_instance_type=t3.medium
 node_volume_size=8
 # These three come from control plan
 

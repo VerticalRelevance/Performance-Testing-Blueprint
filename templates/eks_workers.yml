@@ -78,7 +78,7 @@ Parameters:
 
   NodeInstanceType:
     Type: String
-    Default: t3.micro
+    Default: t3.medium
     AllowedValues:
       - a1.medium
       - a1.large
