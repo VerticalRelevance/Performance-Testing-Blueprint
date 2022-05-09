@@ -1,14 +1,14 @@
 loadtest:
   # loadtest.name -- a name used for resources and settings in this load test
-  name: example
+  name: performance-testing-blueprint
   # loadtest.locust_locustfile -- the name of the locustfile
-  locust_locustfile: main.py
+  locust_locustfile: characterization.py
   # loadtest.locust_locustfile_path -- the path of the locustfile (without trailing backslash)
-  locust_locustfile_path: "/mnt/locust"
+  locust_locustfile_path: "/mnt/locust/characterization"
   # loadtest.locust_locustfile_configmap -- name of a configmap containing your locustfile (default uses the example locustfile)
-  locust_locustfile_configmap: "example-locustfile"
+  locust_locustfile_configmap: ""
   # loadtest.locust_lib_configmap -- name of a configmap containing your lib (default uses the example lib)
-  locust_lib_configmap: "example-lib"
+  locust_lib_configmap: ""
   # loadtest.locust_host -- the host you will load test
   locust_host: https://www.google.com
   # loadtest.pip_packages -- a list of extra python pip packages to install
@@ -93,7 +93,7 @@ worker:
   hpa:
     enabled: false
     minReplicas: 1
-    maxReplicas: 100
+    maxReplicas: 5
     targetCPUUtilizationPercentage: 40
   # worker.resources -- resources for the locust worker
   resources: {}
