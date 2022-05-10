@@ -343,13 +343,6 @@ Resources:
         - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
       Path: /
 
-  NodeInstanceProfile:
-    Type: "AWS::IAM::InstanceProfile"
-    Properties:
-      Path: /
-      Roles:
-        - Ref: NodeInstanceRole
-
   NodeSecurityGroup:
     Type: "AWS::EC2::SecurityGroup"
     Properties:
@@ -436,8 +429,6 @@ Resources:
               DeleteOnTermination: true
               VolumeSize: !Ref NodeVolumeSize
               VolumeType: gp2
-        IamInstanceProfile:
-          Arn: !GetAtt NodeInstanceProfile.Arn
         ImageId: !If
           - HasNodeImageId
           - Ref: NodeImageId
@@ -457,27 +448,18 @@ Resources:
                      --region ${AWS::Region}
 
   NodeGroup:
-    Type: "AWS::AutoScaling::AutoScalingGroup"
+    Type: "AWS::EKS::Nodegroup"
     Properties:
-      DesiredCapacity: !Ref NodeAutoScalingGroupDesiredCapacity
+      ClusterName: !Ref ClusterName
       LaunchTemplate:
-        LaunchTemplateId: !Ref NodeLaunchTemplate
+        Id: !Ref NodeLaunchTemplate
         Version: !GetAtt NodeLaunchTemplate.LatestVersionNumber
-      MaxSize: !Ref NodeAutoScalingGroupMaxSize
-      MinSize: !Ref NodeAutoScalingGroupMinSize
-      Tags:
-        - Key: Name
-          PropagateAtLaunch: "true"
-          Value: !Sub ${ClusterName}-${NodeGroupName}-Node
-        - Key: !Sub kubernetes.io/cluster/${ClusterName}
-          PropagateAtLaunch: "true"
-          Value: owned
-      VPCZoneIdentifier: !Ref Subnets
-    UpdatePolicy:
-      AutoScalingRollingUpdate:
-        MaxBatchSize: "1"
-        MinInstancesInService: !Ref NodeAutoScalingGroupDesiredCapacity
-        PauseTime: PT5M
+      NodeRole: !GetAtt NodeInstanceRole.Arn
+      ScalingConfig:
+        DesiredSize: !Ref NodeAutoScalingGroupDesiredCapacity
+        MinSize: !Ref NodeAutoScalingGroupMinSize
+        MaxSize: !Ref NodeAutoScalingGroupMaxSize
+      Subnets: !Ref Subnets
 
 Outputs:
   NodeInstanceRole:
