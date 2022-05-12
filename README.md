@@ -1,12 +1,12 @@
 # Performance-Testing-Blueprint
 Blueprint for performance testing foundation.
 
-## Framework (Locust) Details
-
-[Locust](locust.io) is the performance testing tool chosen for this blueprint. While this blueprint will focus on implementing the performance tests regardless of the tool, this section will cover some things specific to Locust to get those out of the way, so that the rest of the sections can focus on implementing the recommendations found in the playbook.
-
-__This can go in a running locally section.__
-Locust docs describe creating something called a locust file. This file is used as an entrypoint into the Locust framework. To see a simple example open `locustfiles/simple_locust_file.py`. To run locust with the webUI, then run from the cli: `locust -f locustfiles/simple_locust_file.py`. See `requirements.txt` for the things that pip will need to install in your environment. Note, see the pipeline scripts for an example of a headless run using Locust.
+## Blueprint Overview
+This blueprint is trying to do several things. Hopefully well:
+- Provide examples of what the different types of performance tests look like, regardless of tooling.
+- Provide examples of performance tests at various levels of maturity, uses cases, and performance test types.
+- Provide examples of how to run Locust locally as you begin to write tests and start the performance test journey.
+- Provide an example of how to use Locust to setup a distributed performance tester in AWS with a master and many workers.
 
 ## Repo structure
 
@@ -21,6 +21,8 @@ This repo has the following directories based on the recommendations in the play
 `locustfiles` These are the entrypoints into the performance test framework; here it is locust.
 
 `pipeline` These are the scripts that would run in the pipeline of the prod code (system under test.)
+
+`scripts` These are scripts that are used to deploy infrastructure and distributed performance testing system components.
 
 `utils` Performance testing utils.
 
@@ -39,5 +41,7 @@ These are the longer running tests. That characterize the system under test usin
 ## FAQs
 
 ### There are many things going on here. Where to I start building this out on a project?
+I assume you are using locust. Go [here](https://docs.locust.io/en/stable/quickstart.html) to get Locust setup on your system.
 
-### Where can I look to discover how I can start fully automating my performance tests?
+### I am only here to better understand implementing performance tests regardless of tool. Where can I go to look at the different performance test types?
+Take a look at the characterization and locustfile folders for details on the tests themselves.
