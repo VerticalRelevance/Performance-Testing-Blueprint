@@ -36,7 +36,9 @@ These (component) tests run in the pipeline of the service being tested. The goa
 
 ## Characterization Tests
 
-These are the longer running tests. That characterize the system under test using the types of performance tests mentioned in the playbook. **_These things_** cover the characterization tests. Currently, WIP.
+These are the longer running tests. That characterize the system under test using the types of performance tests mentioned in the playbook.
+
+
 
 ## FAQs
 
