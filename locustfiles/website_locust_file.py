@@ -11,14 +11,14 @@ class WebsiteRunner(HttpUser):
         super().__init__(*args, **kwargs)
         self._user_journey = UserJourney(self.client)
 
-    @task
+    @task(1)
     def purchase_workflow(self):
         self._user_journey.purchase_workflow()
 
-    @task
+    @task(5)
     def browse_workflow(self):
         self._user_journey.browse_workflow()
 
-    @task
+    @task(2)
     def abandon_cart(self):
         self._user_journey.abandon_cart()
