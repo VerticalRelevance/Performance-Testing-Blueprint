@@ -1,7 +1,7 @@
 from locust import TaskSet, task, HttpUser, constant_throughput, LoadTestShape
 
 from components.category import Category
-from controls.load_shape_controller import Configuration, LocustState, LoadShapeController
+from controls.capacity_finder_shape_controller import Configuration, LocustState, LoadShapeController
 
 config = Configuration(
     initial_number_of_users=1,

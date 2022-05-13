@@ -1,4 +1,4 @@
-from controls.load_shape_controller import LoadShapeController, Configuration, LocustState
+from controls.capacity_finder_shape_controller import LoadShapeController, Configuration, LocustState
 
 
 def build_default_configuration():
