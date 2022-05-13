@@ -62,3 +62,16 @@ class TestSpikeShapeController:
         assert result_t1 == expected_users_rate_tuple_t1
         assert result_t2 == expected_users_rate_tuple_t2
         assert result_t3 == expected_users_rate_tuple_t3
+
+    def test_calculate_corrects_to_steady_state_if_overshot(self):
+        default_args = build_custom_args()
+        args = default_args._replace(spawn_rate=5)
+        controller = SpikeShapeController()
+        expected_users_rate_tuple_t0 = (0, 5)
+        expected_users_rate_tuple_t1 = (2, 5)
+
+        result_t0 = controller.calculate(args)
+        result_t1 = controller.calculate(args)
+
+        assert result_t0 == expected_users_rate_tuple_t0
+        assert result_t1 == expected_users_rate_tuple_t1

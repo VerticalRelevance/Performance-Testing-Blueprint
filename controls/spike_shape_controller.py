@@ -30,6 +30,8 @@ class SpikeShapeController:
 
     def ramping_to_steady_state(self, args: CustomArgs):
         self._current_users += args.spawn_rate
+        if self._current_users > args.steady_state_users:
+            self._current_users = args.steady_state_users
         if self._current_users == args.steady_state_users:
             self._state = "Idling At Steady State"
 
