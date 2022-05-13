@@ -36,9 +36,7 @@ These (component) tests run in the pipeline of the service being tested. The goa
 
 ## Characterization Tests
 
-These are the longer running tests. That characterize the system under test using the types of performance tests mentioned in the playbook.
-
-
+These are the longer running tests. That characterize the system under test using the types of performance tests mentioned in the playbook. There are a couple ways to perform these tests. You can use the either a component locustfile or a user journey locustfile and perform these tests manually using the web UI. Alternatively, Locust, for example, provides a `LoadTestShape` class that can be used to create custom load profiles to automate these tests. 
 
 ## FAQs
 
