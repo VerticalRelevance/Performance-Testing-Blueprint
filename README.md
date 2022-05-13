@@ -41,7 +41,7 @@ These are the longer running tests. That characterize the system under test usin
 ## FAQs
 
 ### How can I get started running one of these examples quickly?
-Run this in your command line:
+Assuming you have python3 already installed and are running on a mac. Run this in your command line:
 ```
 git clone git@github.com:VerticalRelevance/Performance-Testing-Blueprint.git &&
 cd Performance-Testing-Blueprint && 
@@ -50,7 +50,8 @@ python3 -m venv ./venv &&
 pip3 install -r requirements.txt &&
 locust -f locustfiles/simple_locust_file.py
 ```
-Then open a browser at [http://localhost:8089](http://localhost:8089)
+Then open a browser at [http://localhost:8089](http://localhost:8089).
+If you are running on another OS, the commands might be different to activate the python virtual environment (line 4.)
 
 This downloads the project from GitHub, installs a Python virtual environment inside the project directory, then installs the project dependencies inside that environment, and finally launches Locust using `simple_locustfile.py`. All that is left is opening the browser at localhost to run Locust using the web UI.
 
