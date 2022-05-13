@@ -102,3 +102,17 @@ class TestSpikeShapeController:
         result_t5 = controller.calculate(args)
 
         assert result_t5 == expected_users_rate_tuple_t5
+
+    def test_calculate_ramps_up_to_spike_does_not_overshoot_number_of_users(self):
+        default_args = build_custom_args()
+        args = default_args._replace(spawn_rate=5)
+        controller = SpikeShapeController()
+        expected_users_rate_tuple_t4 = (3, 5)
+
+        controller.calculate(args)
+        controller.calculate(args)
+        controller.calculate(args)
+        controller.calculate(args)
+        result_t4 = controller.calculate(args)
+
+        assert result_t4 == expected_users_rate_tuple_t4

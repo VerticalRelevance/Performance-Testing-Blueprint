@@ -44,10 +44,13 @@ class SpikeShapeController:
             self._state = "Ramping To Spike State"
 
     def _ramping_to_spike_state(self, args:CustomArgs):
+        self._current_users += args.spawn_rate
+        if self._current_users > args.spike_state_users:
+            self._current_users = args.spike_state_users
         if self._current_users == args.spike_state_users:
             self._state = "Idling At Spike State"
         else:
-            self._current_users += 1
+            self._current_users += args.spawn_rate
 
     def _idling_at_spike_state(self, args: CustomArgs):
         pass
