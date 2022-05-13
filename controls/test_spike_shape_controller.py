@@ -45,7 +45,7 @@ class TestSpikeShapeController:
         assert result_t0 == expected_users_rate_tuple_t0
         assert result_t1 == expected_users_rate_tuple_t1
 
-    def test_calculate_stops_ramp_up_to_steady_state_when_dwell_reached(self):
+    def test_calculate_stops_ramp_up_to_steady_state_when_users_reached(self):
         args = build_custom_args()
         controller = SpikeShapeController()
         expected_users_rate_tuple_t0 = (0, 1)
