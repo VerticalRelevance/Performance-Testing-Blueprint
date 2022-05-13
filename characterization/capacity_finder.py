@@ -29,7 +29,7 @@ class UserTasks(TaskSet):
 
     @task
     def get_category(self):
-        Category(self.client).get_category()  # TODO: inject other components or user journeys
+        Category(self.client).get_category()
         DataCaptor.number_of_failures = self.user.environment.stats.num_failures
 
 

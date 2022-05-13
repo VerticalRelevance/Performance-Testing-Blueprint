@@ -28,7 +28,6 @@ class Configuration:
 @dataclass
 class ControllerState:
     previous_number_of_failures = 0
-    #  TODO: consider change from tick counts to seconds for time calculations
     #  Locust tick is a little more than 1s. Will affect long runs.
     #  Might only affect dwells of around 1000s being off 10s of seconds
     tick_counter = 0  # 1 tick = 1 second
