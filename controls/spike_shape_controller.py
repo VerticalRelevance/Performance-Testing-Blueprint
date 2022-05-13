@@ -15,13 +15,23 @@ class SpikeShapeController:
         self.hasInitialized = False
         self._current_users = 0
         self._state = "Not Initialized"
+        self.state_dictionary = {
+            "Not Initialized": self.not_initialized,
+            "Ramping To Steady State": self.ramping_to_steady_state,
+            "Idling At Steady State": self.idling_at_steady_state,
+        }
 
     def calculate(self, args: CustomArgs):
-        if "Not Initialized" == self._state:
-            self._state = "Ramping To Steady State"
-            return 0, args.spawn_rate
-        if "Ramping To Steady State" == self._state:
-            self._current_users += args.spawn_rate
-            if self._current_users == args.steady_state_users:
-                self._state = "Idling At Steady State"
+        self.state_dictionary[self._state](args)
         return self._current_users, args.spawn_rate
+
+    def not_initialized(self, args):
+        self._state = "Ramping To Steady State"
+
+    def ramping_to_steady_state(self, args: CustomArgs):
+        self._current_users += args.spawn_rate
+        if self._current_users == args.steady_state_users:
+            self._state = "Idling At Steady State"
+
+    def idling_at_steady_state(self, args):
+        pass
