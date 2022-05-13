@@ -75,3 +75,30 @@ class TestSpikeShapeController:
 
         assert result_t0 == expected_users_rate_tuple_t0
         assert result_t1 == expected_users_rate_tuple_t1
+
+    def test_calculate_ramps_up_to_spike_state_when_dwell_reached(self):
+        args = build_custom_args()
+        controller = SpikeShapeController()
+        expected_users_rate_tuple_t4 = (3, 1)
+
+        controller.calculate(args)
+        controller.calculate(args)
+        controller.calculate(args)
+        controller.calculate(args)
+        result_t4 = controller.calculate(args)
+
+        assert result_t4 == expected_users_rate_tuple_t4
+
+    def test_calculate_stops_adding_users_when_spiking_when_spike_users_reached(self):
+        args = build_custom_args()
+        controller = SpikeShapeController()
+        expected_users_rate_tuple_t5 = (3, 1)
+
+        controller.calculate(args)
+        controller.calculate(args)
+        controller.calculate(args)
+        controller.calculate(args)
+        controller.calculate(args)
+        result_t5 = controller.calculate(args)
+
+        assert result_t5 == expected_users_rate_tuple_t5
