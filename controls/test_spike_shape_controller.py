@@ -162,3 +162,20 @@ class TestSpikeShapeController:
         result_t5 = controller.calculate(args)
 
         assert result_t5 == expected_users_rate_tuple_t5
+
+    def test_calculate_ramps_up_when_steady_state_dwell_reached_second_time(self):
+        args = build_custom_args()
+        controller = SpikeShapeController()
+        expected_users_rate_tuple_t8 = (3, 1)
+
+        controller.calculate(args)
+        controller.calculate(args)
+        controller.calculate(args)
+        controller.calculate(args)
+        controller.calculate(args)
+        controller.calculate(args)
+        controller.calculate(args)
+        controller.calculate(args)
+        result_t8 = controller.calculate(args)
+
+        assert result_t8 == expected_users_rate_tuple_t8

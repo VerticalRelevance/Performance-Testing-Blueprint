@@ -65,4 +65,5 @@ class SpikeShapeController:
         if self._current_users <= args.steady_state_users:
             self._current_users = args.steady_state_users
             self._state = "Idling At Steady State"
+            self._tick_counter = 0
 
