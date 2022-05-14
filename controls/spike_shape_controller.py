@@ -26,6 +26,7 @@ class SpikeShapeController:
         }
 
     def calculate(self, args: CustomArgs):
+        print(self._state)
         self.state_dictionary[self._state](args)
         return self._current_users, args.spawn_rate
 
