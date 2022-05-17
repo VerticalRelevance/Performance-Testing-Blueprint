@@ -1,8 +1,6 @@
 #!/bin/sh
 
-cluster_control_plane_security_group=$1
-subnets=$2
-vpc_id=$3
+control_plane_stack_name=PerformanceTestingEKSControlPlane
 
 template=../templates/eks_workers.yml
 stack_name=PerformanceTestingEKSWorkers
@@ -37,6 +35,4 @@ aws cloudformation deploy \
       NodeGroupName="$worker_node_group_name" \
       NodeInstanceType="$node_instance_type" \
       NodeVolumeSize="$node_volume_size" \
-      ClusterControlPlaneSecurityGroup="$cluster_control_plane_security_group" \
-      Subnets="$subnets" \
-      VpcId="$vpc_id" \
+      ControlPlaneStackName="$control_plane_stack_name"
