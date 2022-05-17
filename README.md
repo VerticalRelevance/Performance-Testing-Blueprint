@@ -1,5 +1,46 @@
 # Performance-Testing-Blueprint
-Blueprint for performance testing foundation.
+
+Blueprint for performance testing foundation. This blueprint uses Locust as the performance test framework. You can read more about it [here]().
+
+## Installation guide
+
+Clone this blueprint repo.
+
+`git clone git@github.com:VerticalRelevance/Performance-Testing-Blueprint.git`
+
+Check that you have python 3 installed on your machine. If you don't have it, you can get it [here](https://www.python.org/downloads/).
+
+`python3 --version`
+
+Ensure that you are in the root of the blueprint directory.
+
+`cd Performance-Testing-Blueprint`
+
+You are about to install several Python packages. These include Locust and its dependencies along with this project's dependencies. When working in Python, it is recommended to install these packages in something called a virtual environment. You can read more about this [here](https://docs.python.org/3/tutorial/venv.html).
+
+Create the virtual environment. Here it is created in a folder called `venv`.
+
+`python3 -m venv ./venv`
+
+Once the virtual environment is created, activate the virtual environment.
+
+`source venv/bin/activate`
+
+Now it is time to use the virtual environment to install the packages needed for Locust and this project. Now that you are inside the virtual environment you created, you can install them with pip using the requirements.txt file that contains a list of the packages and their versions that are needed.
+
+`pip3 install -r requirements.txt`
+
+Once that finishes, all the things to run locust are now installed.
+
+## Running a Performance Test
+
+Once Locust and its dependencies are installed (see [Installation Guide](#installation-guide)), you run Locust via the command line by specifying a so-called locustfile. This file is the entrypoint into the Locust tool. Have a look at the `locustfiles/simple_locust_file.py` for an example of how to structure one of these files.
+
+To run Locust using the `simple_locust_file` type the following into the terminal.
+
+`locust -f locustfiles/simple_locust_file.py`
+
+Open a browser at [http://localhost:8089](http://localhost:8089). Enter the number of users (concurrency), the spawn rate for the generation of new users and press Start swarming. This will start the locust load generator. As the test progresses, you can change the number of users and the spawn rate. Press the blue `Edit` link in the Locust toolbar at the top of the page to do this. In this way you can perform the various performance test types by changing the number of users. There are also more automated ways of doing this using Locust. Take a look at the characterization folder at the top of the page.
 
 ## Blueprint Overview
 This blueprint is trying to do several things. Hopefully well:
@@ -68,4 +109,4 @@ There are many ways to organize your tests. Here, we have a folder dedicated to 
 Have a look at the templates (IaC) and scripts folders. These folders do the things necessary to set up and run a distributed performance testing system.
 
 ### What are the tests in these examples running against?
-These tests run against something called the Gatling demo store. It is a public target set up by Gatling for this kind of thing.
+These tests run against something called the Gatling demo store. It is a public target set up by Gatling for this kind of thing
