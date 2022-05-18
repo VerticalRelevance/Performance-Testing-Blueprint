@@ -4,4 +4,11 @@ phases:
   build:
     on-failure: ABORT
     commands:
-      - bash scripts/infrastructure_deploy_eks_control_plane.sh
+      - echo Deploying...
+      - aws cloudformation deploy \
+      - --template-file templates/eks_control_plane.yml \
+      - --stack-name PerformanceTestingEKSControlPlane \
+      - --capabilities CAPABILITY_NAMED_IAM \
+      - --parameter-overrides \
+      - EKSIAMRoleName=EKSServiceRole \
+      - EKSClusterName=PerformanceTestingControlPlane
