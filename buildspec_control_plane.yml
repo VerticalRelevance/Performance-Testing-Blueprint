@@ -4,4 +4,6 @@ phases:
   build:
     on-failure: ABORT
     commands:
+      - pwd
+      - ls -lha
       - bash scripts/infrastructure_deploy_eks_control_plane.sh
