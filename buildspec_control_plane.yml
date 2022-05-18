@@ -2,7 +2,6 @@ version: 0.2
 
 phases:
   build:
-    run-as: Linux-user-name
     on-failure: ABORT
     commands:
       - bash scripts/infrastructure_deploy_eks_control_plane.sh
