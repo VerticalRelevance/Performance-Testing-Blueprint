@@ -1,6 +1,6 @@
 #!/bin/sh
 
-template=../templates/eks_control_plane.yml
+template=templates/eks_control_plane.yml
 stack_name=PerformanceTestingEKSControlPlane
 
 echo Preparing to deploy eks template
