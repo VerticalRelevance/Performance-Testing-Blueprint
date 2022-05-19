@@ -1,0 +1,8 @@
+version: 0.2
+
+phases:
+  build:
+    on-failure: ABORT
+    commands:
+      - aws --version
+      - bash scripts/infrastructure_deploy_eks_workers.sh
