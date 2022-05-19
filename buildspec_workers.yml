@@ -5,4 +5,4 @@ phases:
     on-failure: ABORT
     commands:
       - aws --version
-      - bash scripts/infrastructure_deploy_eks_workers.sh
+      - aws cloudformation deploy --template-file "$template" --stack-name "$stack_name" --capabilities CAPABILITY_NAMED_IAM --parameter-overrides ClusterName="$cluster_name" KeyName="$key_name" NodeAutoScalingGroupDesiredCapacity="$desired_capacity" NodeAutoScalingGroupMaxSize="$max_capacity" NoteAutoScalingGroupMinSize="$min_capacity" NodeGroupName="$worker_node_group_name" NodeInstanceType="$node_instance_type" NodeVolumeSize="$node_volume_size" ControlPlaneStackName="$control_plane_stack_name"
