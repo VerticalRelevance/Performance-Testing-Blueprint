@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Amazon EKS Sample VPC - Private and Public subnets'
+Description: 'Builds the Performance Test Blueprint EKS Control Plane'
 
 # Taken from https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-10-08/amazon-eks-vpc-private-subnets.yaml
 

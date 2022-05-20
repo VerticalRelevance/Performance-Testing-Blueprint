@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description: Amazon EKS - Node Group
+Description: Builds the Performance Test Blueprint EKS Workers
 
 Metadata:
   "AWS::CloudFormation::Interface":
