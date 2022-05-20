@@ -72,6 +72,28 @@ Resources:
         BuildSpec: buildspec_workers.yml
         Type: CODEPIPELINE
 
+  HelmChartRepoBuild:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: PerformanceTestHelmChartRepo-cfn # TODO maybe pass as param?
+      Description: Project to build the Performance Test Blueprint helm chart repo for distributed load generation.
+      ConcurrentBuildLimit: 1
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/amazonlinux2-aarch64-standard:2.0
+        Type: ARM_CONTAINER
+      LogsConfig:
+        CloudWatchLogs:
+          GroupName: PerformanceTestBluePrintPipeline-cfn
+          StreamName: HelmChartRepoBuild
+          Status: ENABLED
+      Source:
+        BuildSpec: buildspec_chart_repo.yml
+        Type: CODEPIPELINE
+
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
@@ -122,6 +144,19 @@ Resources:
               InputArtifacts:
                 - Name: PerformanceTestBlueprintSourceArtifact
               RunOrder: '1'
+        - Name: BuildHelmChartRepo
+          Actions:
+            - Name: Build
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: 1
+              Configuration:
+                ProjectName: !Ref HelmChartRepoBuild
+              InputArtifacts:
+                - Name: PerformanceTestBlueprintSourceArtifact
+              RunOrder: '1'
 
   CodeBuildRole:
     Type: AWS::IAM::Role
@@ -148,6 +183,7 @@ Resources:
                   - 'logs:*'
                   - 'codecommit:*'
                   - 's3:*'
+                  - 'ecr:*'
                 Effect: Allow
                 Resource: '*'
               - Action:
