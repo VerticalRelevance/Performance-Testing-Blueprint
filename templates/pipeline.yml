@@ -50,6 +50,28 @@ Resources:
         BuildSpec: buildspec_control_plane.yml
         Type: CODEPIPELINE
 
+  EKSWorkersBuild:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: PerformanceTestEKSWorkers-cfn # TODO maybe pass as param?
+      Description: Project to build the Performance Test Blueprint EKS control plane for distributed load generation.
+      ConcurrentBuildLimit: 1
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/amazonlinux2-aarch64-standard:2.0
+        Type: ARM_CONTAINER
+      LogsConfig:
+        CloudWatchLogs:
+          GroupName: PerformanceTestBluePrintPipeline-cfn
+          StreamName: EKSWorkersBuild
+          Status: ENABLED
+      Source:
+        BuildSpec: buildspec_workers.yml
+        Type: CODEPIPELINE
+
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
@@ -84,6 +106,19 @@ Resources:
                 Version: 1
               Configuration:
                 ProjectName: !Ref EKSControlPlaneBuild
+              InputArtifacts:
+                - Name: PerformanceTestBlueprintSourceArtifact
+              RunOrder: '1'
+        - Name: BuildEKSWorkers
+          Actions:
+            - Name: Build
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: 1
+              Configuration:
+                ProjectName: !Ref EKSWorkersBuild
               InputArtifacts:
                 - Name: PerformanceTestBlueprintSourceArtifact
               RunOrder: '1'
