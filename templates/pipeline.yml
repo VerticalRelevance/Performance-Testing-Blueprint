@@ -34,7 +34,7 @@ Resources:
       Name: PerformanceTestEKSControlPlane-cfn # TODO maybe pass as param?
       Description: Project to build the Performance Test Blueprint EKS control plane for distributed load generation.
       ConcurrentBuildLimit: 1
-      ServiceRole: !GetAtt CFNRole.Arn
+      ServiceRole: !GetAtt CodeBuildRole.Arn
       Artifacts:
         Type: CODEPIPELINE
       Environment:
@@ -88,7 +88,7 @@ Resources:
                 - Name: PerformanceTestBlueprintSourceArtifact
               RunOrder: '1'
 
-  CFNRole:
+  CodeBuildRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -100,7 +100,7 @@ Resources:
         Version: '2012-10-17'
       Path: /
       Policies:
-        - PolicyName: CloudFormationRole
+        - PolicyName: CodeBuildPolicy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -110,6 +110,9 @@ Resources:
                   - 'autoscaling:*'
                   - 'eks:*'
                   - 'ssm:*'
+                  - 'logs:*'
+                  - 'codecommit:*'
+                  - 's3:*'
                 Effect: Allow
                 Resource: '*'
               - Action:
