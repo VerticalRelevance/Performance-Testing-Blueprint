@@ -60,13 +60,13 @@ This repo has the following directories based on the recommendations in the play
 
 `locustfiles` These are the entrypoints into the performance test framework; here it is locust. These are locust files geared more towards being examples.
 
-`pipeline` These are the scripts that would run in the pipeline of the prod code (system under test.)
+`pipeline` These are the scripts that would run in the pipeline of the system under test. Notice that they don't use the Locust UI. More information on running Locust specifically as part of a CI/CD pipeline can be found [here](https://docs.locust.io/en/stable/running-without-web-ui.html).
 
 `utils` Performance testing utils.
 
 `website` This is where workflows through the website are defined. Note how these tests consume the component tests.
 
-## Pipeline Tests
+## CI/CD Pipeline Tests
 
 These (component) tests run in the pipeline of the service being tested. The goal here is to have a baseline of tests that must pass in order to prevent performance regressions. **_These things_** cover the pipeline tests. The pipeline tests implement a shell script runner. This shell script is responsible for calling initiating Locust, capturing the configuration, and collecting the reports. See the `pipeline` folder for examples.
 
