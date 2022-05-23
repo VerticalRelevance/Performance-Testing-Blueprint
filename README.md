@@ -94,6 +94,9 @@ This downloads the project from GitHub, installs a Python virtual environment in
 ### I am only here to better understand implementing performance tests regardless of tool. Where can I go to look at the different performance test types?
 Take a look at the characterization and locustfile folders for details on the tests themselves.
 
+### Where can I go to have a look at how component tests can be put together to create scenarios or workflows?
+Have a look at `locustfiles/website_locust_file.py`. It uses python code from the `website` directory which uses code from `components` to create user journeys and test those journeys.
+
 ### There are many things going on here. Where to I start building this out on a project?
 To get started using Locust, go [here](https://docs.locust.io/en/stable/quickstart.html) to get Locust setup on your system. Try running one of the files in the locustfiles folder on your system. A good one to try is `simple_locust_file.py`. It has few dependencies and is a good example of the anatomy of a performance test in Locust. Then, copy this file and change it to test a component of your system. Once that is working, you have a basic component test. Congratulations!
 
