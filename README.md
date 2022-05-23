@@ -43,19 +43,16 @@ To run Locust using the `simple_locust_file` type the following into the termina
 Open a browser at [http://localhost:8089](http://localhost:8089). Enter the number of users (concurrency), the spawn rate for the generation of new users and press Start swarming. This will start the locust load generator. As the test progresses, you can change the number of users and the spawn rate. Press the blue `Edit` link in the Locust toolbar at the top of the page to do this. In this way you can perform the various performance test types by changing the number of users. There are also more automated ways of doing this using Locust. Take a look at the characterization folder at the top of the page.
 
 ## Blueprint Overview
-This blueprint is trying to do several things. Hopefully well:
+This blueprint is doing several things.
 - Provide examples of what the different types of performance tests look like, regardless of tooling.
 - Provide examples of performance tests at various levels of maturity, uses cases, and performance test types.
 - Provide examples of how to run Locust locally as you begin to write tests and start the performance test journey.
-- Provide an example of how to use Locust to setup a distributed performance tester in AWS with a master and many workers.
 
 ## Repo structure
 
 This repo has the following directories based on the recommendations in the playbook.
 
 `characterization` These are where the characterization locustfiles for the various types of performance tests live. These too are locustfiles.
-
-`chart` This folder has the helm chart used to deploy to EKS. Using chart from [here](https://github.com/deliveryhero/helm-charts).
 
 `components` These are the libraries that make the calls to each service. Separated here by resources. Imagine each of the components here having its own prod repo and pipeline associated with it.
 
@@ -64,8 +61,6 @@ This repo has the following directories based on the recommendations in the play
 `locustfiles` These are the entrypoints into the performance test framework; here it is locust. These are locust files geared more towards being examples.
 
 `pipeline` These are the scripts that would run in the pipeline of the prod code (system under test.)
-
-`scripts` These are scripts that are used to deploy infrastructure and distributed performance testing system components.
 
 `utils` Performance testing utils.
 
@@ -104,9 +99,6 @@ To get started using Locust, go [here](https://docs.locust.io/en/stable/quicksta
 
 ### How can I organize my tests?
 There are many ways to organize your tests. Here, we have a folder dedicated to locustfiles. These are the files that are passed into the CLI directly to start the tests. Libraries are separated into folders depending on their functionality: components, controls, etc.
-
-### I want to set up a distributed performance testing system using Locust. How do I do this?
-Have a look at the templates (IaC) and scripts folders. These folders do the things necessary to set up and run a distributed performance testing system.
 
 ### What are the tests in these examples running against?
 These tests run against something called the Gatling demo store. It is a public target set up by Gatling for this kind of thing
