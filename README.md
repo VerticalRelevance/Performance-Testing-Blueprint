@@ -2,6 +2,10 @@
 
 Blueprint for performance testing foundation. This blueprint uses Locust as the performance test framework. You can read more about it [here]().
 
+## This branch
+
+This branch contains some things that did not make it into the release June 2022. These things include directories that were intended to be used with distributed load testing.
+
 ## Installation guide
 
 Clone this blueprint repo.
