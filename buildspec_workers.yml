@@ -1,8 +1,0 @@
-version: 0.2
-
-phases:
-  build:
-    on-failure: ABORT
-    commands:
-      - aws --version
-      - aws cloudformation deploy --template-file templates/eks_workers.yml --stack-name PerformanceTestBlueprint-EKSWorkers --capabilities CAPABILITY_NAMED_IAM --parameter-overrides ClusterName=PerformanceTestingControlPlane KeyName=PerformanceTestEKSWorkersKey NodeAutoScalingGroupDesiredCapacity=1 NodeAutoScalingGroupMaxSize=3 NoteAutoScalingGroupMinSize=1 NodeGroupName=PerformanceTestWorkers NodeInstanceType=t3.medium NodeVolumeSize=8 ControlPlaneStackName=PerformanceTestBlueprint-EKSControlPlane

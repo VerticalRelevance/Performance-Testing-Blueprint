@@ -1,8 +1,0 @@
-version: 0.2
-
-phases:
-  build:
-    on-failure: ABORT
-    commands:
-      - aws --version
-      - aws cloudformation deploy --template-file templates/eks_control_plane.yml --stack-name PerformanceTestBlueprint-EKSControlPlane --capabilities CAPABILITY_NAMED_IAM --parameter-overrides EKSIAMRoleName=EKSServiceRole EKSClusterName=PerformanceTestingControlPlane
