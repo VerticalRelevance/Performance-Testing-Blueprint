@@ -1,4 +1,4 @@
-from locust import HttpUser, task
+from locust import HttpUser, task, constant_throughput
 
 
 class SimplePerformanceTest(HttpUser):
@@ -8,6 +8,7 @@ class SimplePerformanceTest(HttpUser):
 
     # Specify the host to attack here
     host = "http://demostore.gatling.io"
+    wait_time = constant_throughput(1)  # number of @tasks per second per user
 
     # The @task annotation is used to tell Locust what the test methods are. Note the use of self.client inside the
     # test method to send http requests.
