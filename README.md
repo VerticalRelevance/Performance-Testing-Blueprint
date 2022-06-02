@@ -1,7 +1,6 @@
 # Performance-Testing-Blueprint
 
-Blueprint for performance testing foundation. This blueprint uses Locust as the performance test framework. You can read more about it [here](docs.locust.io).
-
+Blueprint for performance testing foundation. This blueprint uses Locust as the performance test framework. You can read more about it [here](https://docs.locust.io).
 ## Installation guide
 
 Clone this blueprint repo.
