@@ -135,7 +135,7 @@ class TestLoadShapeController:
         assert number_users_spawn_rate_tuple_t2 == (4, 4)
         assert number_users_spawn_rate_tuple_t3 == (8, 8)
 
-    def test_can_back_off_when_failure_threshold_exceeded(self):
+    def test_can_reduce_users_off_when_failure_threshold_exceeded(self):
         config = build_default_configuration()
         config.is_enabled_tuning = True
         config.initial_number_of_users = 5
@@ -152,7 +152,7 @@ class TestLoadShapeController:
         assert number_users_spawn_rate_tuple_t0 == (5, 4)
         assert number_users_spawn_rate_tuple_t1 == (4, 1)
 
-    def test_does_not_return_number_of_users_or_greater_than_previously_failed(self):
+    def test_does_not_set_number_of_users_to_value_greater_than_previously_failed(self):
         config = build_default_configuration()
         config.is_enabled_tuning = True
         config.initial_number_of_users = 5
