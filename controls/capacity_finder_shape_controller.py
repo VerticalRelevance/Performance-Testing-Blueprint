@@ -70,7 +70,7 @@ class LoadShapeController:
         self._check_stop_conditions(locust_state)
         if self._state.isStopping:
             return None
-        self._calculate_number_of_users()
+        self._update_number_of_users()
         return self._state.number_of_users, self._state.spawn_rate
 
     def _check_stop_conditions(self, locust_state):
@@ -102,18 +102,12 @@ class LoadShapeController:
             self.message = "Time limit of {} seconds exceeded. Stopping run.".format(self._configuration.time_limit)
             self._state.isStopping = True
 
-    def _calculate_number_of_users(self):
-        if self._state.tick_counter > self._state.dwell:
-            self._state.tick_counter = 1
+    def _update_number_of_users(self):
+        if self._should_update_users():
+            self._reset_tick_counter()
             self._update_history()
-            if self._configuration.is_enabled_back_off \
-                    and self._state.failure_rate > self._configuration.failure_rate_threshold:
-                self._state.isBackingOff = True
-                if self._state.isFirstBackOff:
-                    self._state.isFirstBackOff = False
-                    self._state.spawn_rate /= 2
-                self._state.spawn_rate /= 2
-                self._state.number_of_users -= self._state.spawn_rate
+            if self._should_perform_backoff():
+                self._apply_backoff()
             else:
                 if self._state.min_users_with_fails - self._state.max_users_without_fails <= \
                         self._configuration.user_dead_band:
@@ -124,6 +118,27 @@ class LoadShapeController:
                     self._state.number_of_users -= self._state.spawn_rate / 2
                     self._state.spawn_rate /= 4
                     self._state.number_of_users += self._state.spawn_rate
+
+    def _should_update_users(self):
+        return self._state.tick_counter > self._state.dwell
+
+    def _should_perform_backoff(self):
+        return self._configuration.is_enabled_back_off \
+               and self._state.failure_rate > self._configuration.failure_rate_threshold
+
+    def _apply_backoff(self):
+        self._state.isBackingOff = True
+        if self._state.isFirstBackOff:
+            self._apply_first_backoff()
+        self._state.spawn_rate /= 2
+        self._state.number_of_users -= self._state.spawn_rate
+
+    def _apply_first_backoff(self):
+        self._state.isFirstBackOff = False
+        self._state.spawn_rate /= 2
+
+    def _reset_tick_counter(self):
+        self._state.tick_counter = 1
 
     def _update_history(self):
         if self._state.failure_rate == self._configuration.failure_rate_threshold \
