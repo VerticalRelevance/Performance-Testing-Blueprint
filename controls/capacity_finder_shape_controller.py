@@ -111,10 +111,16 @@ class LoadShapeController:
             else:
                 if self._dead_band_not_reached():
                     self._add_users()
-                    if self._state.is_tuning_begun and self._state.number_of_users >= self._state.min_users_with_fails:
-                        self._state.number_of_users -= self._state.spawn_rate / 2
-                        self._state.spawn_rate /= 4
-                        self._state.number_of_users += self._state.spawn_rate
+                    if self._too_many_users():
+                        self._tuned_reduce_users()
+
+    def _tuned_reduce_users(self):
+        self._state.number_of_users -= self._state.spawn_rate / 2
+        self._state.spawn_rate /= 4
+        self._state.number_of_users += self._state.spawn_rate
+
+    def _too_many_users(self):
+        return self._state.is_tuning_begun and self._state.number_of_users >= self._state.min_users_with_fails
 
     def _add_users(self):
         self._state.number_of_users += self._state.spawn_rate
