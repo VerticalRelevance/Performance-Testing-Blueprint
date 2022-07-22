@@ -9,7 +9,7 @@ def build_default_configuration():
         max_number_of_users=10,
         time_limit=10,
         failure_rate_threshold=0,
-        is_enabled_back_off=False,
+        is_enabled_tuning=False,
         user_dead_band=1)
 
 
@@ -137,7 +137,7 @@ class TestLoadShapeController:
 
     def test_can_back_off_when_failure_threshold_exceeded(self):
         config = build_default_configuration()
-        config.is_enabled_back_off = True
+        config.is_enabled_tuning = True
         config.initial_number_of_users = 5
         config.initial_spawn_rate = 4
         config.initial_dwell = 1
@@ -154,7 +154,7 @@ class TestLoadShapeController:
 
     def test_does_not_return_number_of_users_or_greater_than_previously_failed(self):
         config = build_default_configuration()
-        config.is_enabled_back_off = True
+        config.is_enabled_tuning = True
         config.initial_number_of_users = 5
         config.initial_spawn_rate = 4
         config.initial_dwell = 2
@@ -185,7 +185,7 @@ class TestLoadShapeController:
 
     def test_settles_to_max_number_users_within_error_threshold(self):
         config = build_default_configuration()
-        config.is_enabled_back_off = True
+        config.is_enabled_tuning = True
         config.initial_number_of_users = 5
         config.initial_spawn_rate = 4
         config.initial_dwell = 2

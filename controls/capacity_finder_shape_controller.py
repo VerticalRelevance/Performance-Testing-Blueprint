@@ -21,7 +21,7 @@ class Configuration:
     max_number_of_users: int  # number of users to not exceed
     time_limit: int  # seconds
     failure_rate_threshold: int  # failures per second
-    is_enabled_back_off: bool
+    is_enabled_tuning: bool
     user_dead_band: int
 
 
@@ -32,8 +32,8 @@ class ControllerState:
     #  Might only affect dwells of around 1000s being off 10s of seconds
     tick_counter = 0  # 1 tick = 1 second
     isStopping = False
-    isFirstBackOff = True
-    isBackingOff = False
+    is_first_user_reduction = True
+    is_tuning_begun = False  # backing off = reducing the spawn rate
     failure_rate = 0
     max_users_without_fails = 0
     min_users_with_fails = sys.maxsize
@@ -81,7 +81,7 @@ class LoadShapeController:
     def _check_failure_rate_exceeded(self, locust_state):
         self._calculate_failure_rate(locust_state)
         if self._state.failure_rate > self._configuration.failure_rate_threshold:
-            if self._configuration.is_enabled_back_off:
+            if self._configuration.is_enabled_tuning:
                 return
             self.message = "Failure rate of {} per second exceeds threshold of {} per second. Stopping.".format(
                 self._state.failure_rate, self._configuration.failure_rate_threshold)
@@ -106,16 +106,19 @@ class LoadShapeController:
         if self._should_update_users():
             self._reset_tick_counter()
             self._update_history()
-            if self._should_perform_backoff():
-                self._apply_backoff()
+            if self._should_reduce_users():
+                self._reduce_users()
             else:
                 if self._dead_band_not_reached():
-                    self._state.number_of_users += self._state.spawn_rate
-                    self._state.spawn_rate *= 2
-                    if self._state.isBackingOff and self._state.number_of_users >= self._state.min_users_with_fails:
+                    self._add_users()
+                    if self._state.is_tuning_begun and self._state.number_of_users >= self._state.min_users_with_fails:
                         self._state.number_of_users -= self._state.spawn_rate / 2
                         self._state.spawn_rate /= 4
                         self._state.number_of_users += self._state.spawn_rate
+
+    def _add_users(self):
+        self._state.number_of_users += self._state.spawn_rate
+        self._state.spawn_rate *= 2
 
     def _dead_band_not_reached(self):
         return (
@@ -127,25 +130,27 @@ class LoadShapeController:
     def _should_update_users(self):
         return self._state.tick_counter > self._state.dwell
 
-    def _should_perform_backoff(self):
-        return self._configuration.is_enabled_back_off \
-               and self._state.failure_rate > self._configuration.failure_rate_threshold
+    def _should_reduce_users(self):
+        return self._configuration.is_enabled_tuning \
+               and self._state.failure_rate\
+               > self._configuration.failure_rate_threshold
 
-    def _apply_backoff(self):
-        self._state.isBackingOff = True
-        if self._state.isFirstBackOff:
-            self._apply_first_backoff()
+    def _reduce_users(self):
+        self._state.is_tuning_begun = True
+        if self._state.is_first_user_reduction:
+            self._apply_first_user_reduction()
         self._state.spawn_rate /= 2
         self._state.number_of_users -= self._state.spawn_rate
 
-    def _apply_first_backoff(self):
-        self._state.isFirstBackOff = False
+    def _apply_first_user_reduction(self):
+        self._state.is_first_user_reduction = False
         self._state.spawn_rate /= 2
 
     def _reset_tick_counter(self):
         self._state.tick_counter = 1
 
     def _update_history(self):
+        # Why checking equality?
         if self._state.failure_rate == self._configuration.failure_rate_threshold \
                 and self._state.number_of_users > self._state.max_users_without_fails:
             self._state.max_users_without_fails = self._state.number_of_users
