@@ -70,7 +70,8 @@ class LoadShapeController:
         self._check_stop_conditions(locust_state)
         if self._state.isStopping:
             return None
-        self._update_number_of_users()
+        if self._should_update_number_of_users():
+            self._update_number_of_users()
         return self._state.number_of_users, self._state.spawn_rate
 
     def _check_stop_conditions(self, locust_state):
@@ -103,18 +104,17 @@ class LoadShapeController:
         self._state.previous_number_of_failures = locust_state.number_of_failures
 
     def _update_number_of_users(self):
-        if self._should_update_users():
-            self._reset_tick_counter()
-            self._update_history()
-            if self._should_reduce_users():
-                self._reduce_users()
-            else:
-                if self._dead_band_not_reached():
-                    self._add_users()
-                    if self._too_many_users():
-                        self._tuned_reduce_users()
+        self._reset_tick_counter()
+        self._update_history()
+        if self._should_reduce_users():
+            self._reduce_users()
+        else:
+            if self._dead_band_not_reached():
+                self._add_users()
+                if self._too_many_users():
+                    self._reduce_users_by_fourth_of_spawn_rate()
 
-    def _should_update_users(self):
+    def _should_update_number_of_users(self):
         return self._state.tick_counter > self._state.dwell
 
     def _reset_tick_counter(self):
@@ -139,28 +139,35 @@ class LoadShapeController:
         self._state.is_tuning_begun = True
         if self._state.is_first_user_reduction:
             self._apply_first_user_reduction()
-        self._state.spawn_rate /= 2
+        self._reduce_spawn_rate()
         self._state.number_of_users -= self._state.spawn_rate
 
     def _apply_first_user_reduction(self):
         self._state.is_first_user_reduction = False
+        self._reduce_spawn_rate()
+
+    def _reduce_spawn_rate(self):
         self._state.spawn_rate /= 2
 
     def _dead_band_not_reached(self):
         return (
-                    self._state.min_users_with_fails
-                    - self._state.max_users_without_fails
-                    > self._configuration.user_dead_band
+            self._state.min_users_with_fails
+            - self._state.max_users_without_fails
+            > self._configuration.user_dead_band
         )
 
     def _add_users(self):
         self._state.number_of_users += self._state.spawn_rate
+        self._increase_spawn_rate()
+
+    def _increase_spawn_rate(self):
         self._state.spawn_rate *= 2
 
     def _too_many_users(self):
         return self._state.is_tuning_begun and self._state.number_of_users >= self._state.min_users_with_fails
 
-    def _tuned_reduce_users(self):
-        self._state.number_of_users -= self._state.spawn_rate / 2
-        self._state.spawn_rate /= 4
+    def _reduce_users_by_fourth_of_spawn_rate(self):
+        self._reduce_spawn_rate()
+        self._state.number_of_users -= self._state.spawn_rate
+        self._reduce_spawn_rate()
         self._state.number_of_users += self._state.spawn_rate
