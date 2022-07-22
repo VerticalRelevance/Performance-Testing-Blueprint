@@ -109,15 +109,20 @@ class LoadShapeController:
             if self._should_perform_backoff():
                 self._apply_backoff()
             else:
-                if self._state.min_users_with_fails - self._state.max_users_without_fails <= \
-                        self._configuration.user_dead_band:
-                    return self._state.number_of_users, self._state.spawn_rate
-                self._state.number_of_users += self._state.spawn_rate
-                self._state.spawn_rate *= 2
-                if self._state.isBackingOff and self._state.number_of_users >= self._state.min_users_with_fails:
-                    self._state.number_of_users -= self._state.spawn_rate / 2
-                    self._state.spawn_rate /= 4
+                if self._dead_band_not_reached():
                     self._state.number_of_users += self._state.spawn_rate
+                    self._state.spawn_rate *= 2
+                    if self._state.isBackingOff and self._state.number_of_users >= self._state.min_users_with_fails:
+                        self._state.number_of_users -= self._state.spawn_rate / 2
+                        self._state.spawn_rate /= 4
+                        self._state.number_of_users += self._state.spawn_rate
+
+    def _dead_band_not_reached(self):
+        return (
+                    self._state.min_users_with_fails
+                    - self._state.max_users_without_fails
+                    > self._configuration.user_dead_band
+        )
 
     def _should_update_users(self):
         return self._state.tick_counter > self._state.dwell
