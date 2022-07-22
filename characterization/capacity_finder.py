@@ -10,7 +10,7 @@ config = Configuration(
     max_number_of_users=50,
     time_limit=300,
     failure_rate_threshold=0,
-    is_enabled_back_off=True,
+    is_enabled_tuning=True,
     user_dead_band=1
 )
 
